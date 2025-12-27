@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="P_regulator" Id="{815cdd72-bb50-476f-b8d3-8017422d8a3b}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK P_regulator
+VAR CONSTANT
+    //FSM states
+    NOT_MOVING : USINT := 0;
+    MOVING : USINT := 1;
+
+    OUTER_POS_TOL : REAL := 10;
+    INNER_POS_TOL : REAL := 5;
+
+END_VAR
+
+VAR
+    MoveState : USINT := NOT_MOVING;
+
+    DesiredSpeed : REAL;
+    DecelerationRatio : REAL;
+
+END_VAR
+
+VAR_INPUT
+    CurrentPos : REAL;
+    SetpointPos : REAL;
+    MaxSpeed : REAL := 13000;
+    DecelerationLength : REAL := 18000;
+END_VAR
+
+VAR_OUTPUT
+    Speed : REAL;
+    MoveForward : BOOL;
+    MoveBackward : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE MoveState OF
+    NOT_MOVING:
+        IF SetpointPos - CurrentPos > OUTER_POS_TOL THEN
+            MoveForward := TRUE;
+            MoveBackward := FALSE;
+            MoveState := MOVING;
+        ELSIF CurrentPos - SetpointPos > OUTER_POS_TOL THEN
+            MoveForward := FALSE;
+            MoveBackward := TRUE;
+            MoveState := MOVING;
+        END_IF
+
+    MOVING:
+        IF NOT (MoveForward AND SetpointPos - CurrentPos < INNER_POS_TOL OR MoveBackward AND CurrentPos - SetpointPos < INNER_POS_TOL) THEN
+           IF DecelerationLength > 0 THEN
+				DecelerationRatio := ABS(SetpointPos - CurrentPos) / DecelerationLength;
+				IF DecelerationRatio > 1 THEN
+					DecelerationRatio := 1;
+				END_IF
+			ELSE
+				DecelerationRatio := 1;
+			END_IF
+            DesiredSpeed := MaxSpeed * DecelerationRatio;
+        ELSE
+			DesiredSpeed := 0;
+            MoveForward := MoveBackward := FALSE;
+            MoveState := NOT_MOVING;
+			
+        END_IF
+
+END_CASE
+Speed := DesiredSpeed;
+]]></ST>
+    </Implementation>
+    <LineIds Name="P_regulator">
+      <LineId Id="115" Count="12" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="157" Count="7" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="155" Count="1" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="135" Count="2" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="196" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

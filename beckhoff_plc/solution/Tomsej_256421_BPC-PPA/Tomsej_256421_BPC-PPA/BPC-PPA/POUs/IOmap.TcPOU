@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.10">
+  <POU Name="IOmap" Id="{8d16a36d-a4e2-43b6-986a-e1630abc87a8}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM IOmap
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Analog Inputs
+IO.StorageSupportPosition 		:= GVL.mb_Output_Registers[1];		// Pozice supportu skladovacího manipulátoru [0..27648]
+IO.StorageCarriagePosition 		:= GVL.mb_Output_Registers[2];		// Pozice vozíku skladovacího manipulátoru [0..27648]
+	
+// Digital Inputs
+IO.SensorBoxStart 				:= GVL.mb_Output_Registers[0].0;	// Sensor přítomnosti bedny na vstupu velkého dopravníkového pásu [0/1]
+IO.SensorBoxHandling 			:= GVL.mb_Output_Registers[0].1;	// Sensor přítomnosti bedny v pracovním prostoru překládacího manipulátoru [0/1]
+IO.SensorBoxHandled 			:= GVL.mb_Output_Registers[0].2;	// Sensor přítomnosti bedny na konci velkého dopravníkového pásu [0/1]
+IO.SensorBoxStoring 			:= GVL.mb_Output_Registers[0].3;	// Sensor přítomnosti bedny na naskladňovací pozici zakládacího dopravníku [0/1]
+IO.SensorCanNew 				:= GVL.mb_Output_Registers[0].4;	// Sensor přítomnosti nové plechovky na malém dopravníkovém pásu [0/1]
+IO.SensorCanPrepare 			:= GVL.mb_Output_Registers[0].5;	// Sensor přítomnosti plechovky uprostřed malého dopravníkového pásu [0/1]
+IO.SensorCanHandling 			:= GVL.mb_Output_Registers[0].6;	// Sensor přítomnosti plechovky v pracovním prostoru překládacího manipulátoru [0/1]
+IO.ConvCanMoving 				:= GVL.mb_Output_Registers[0].7;	// Signalizace pohybu motoru malého dopravníkového pásu [0/1]
+IO.ConvBoxMoving 				:= GVL.mb_Output_Registers[0].8;	// Signalizace pohybu motoru velkého dopravníkového pásu [0/1]
+IO.ConvLoadMoving 				:= GVL.mb_Output_Registers[0].9;	// Signalizace pohybu motoru zakládacího dopravníkového pásu [0/1]
+IO.StorageSupportMoving 		:= GVL.mb_Output_Registers[0].10;	// Signalizace pohybu motoru supportu skladovacího manipulátoru [0/1]
+IO.StorageCarriageMoving 		:= GVL.mb_Output_Registers[0].11;	// Signalizace pohybu motoru vozíku skladovacího manipulátoru [0/1]
+IO.RoboticArmMoving 			:= GVL.mb_Output_Registers[0].12;	// Signalizace vykonávání programového cyklu 6-osého robotického manipulátoru [0/1]
+IO.HandlingMoving 				:= GVL.mb_Output_Registers[0].13;	// Signalizace vykonávání programového cyklu překládacího manipulátoru [0/1]
+
+// Analog Outputs
+GVL.mb_Input_Registers[2] 		:= IO.RoboticArmProgram;			// Číslo programu pro vykonání 6-osým manipulátorem [0 .. základní pozice, 1 ..uchopení bedny, 2 .. položení bedny na pás]
+GVL.mb_Input_Registers[3] 		:= IO.HandlingProgram;				// Číslo programu pro vykonání překládacím manipulátorem [0 .. základní pozice, 1 .. přenesení na první pozici, 2 .. přenesení na druhou pozici, 3 .. přenesení na třetí pozici]
+GVL.mb_Input_Registers[4] 		:= IO.ConvCanSpeed;					// Rychlost motoru malého dopravníku [0..27648]
+GVL.mb_Input_Registers[5] 		:= IO.ConvBoxSpeed;					// Rychlost motoru velkého dopravníku [0..27648]
+GVL.mb_Input_Registers[6] 		:= IO.ConvLoadSpeed;				// Rychlost motoru zakládacího dopravníku [0..27648]
+GVL.mb_Input_Registers[7] 		:= IO.StorageSupportSpeed;			// Rychlost motoru supportu skladovacího manipulátoru [0..27648]
+GVL.mb_Input_Registers[8] 		:= IO.StorageCarriageSpeed;			// Rychlost motoru vozíku skladovacího manipulátoru [0..27648]
+
+// Digital Outputs
+GVL.mb_Input_Registers[0].0 	:= IO.RoboticArmStartCycle;			// Start programového cyklu 6-osého manipulátoru [náběžná hrana]
+GVL.mb_Input_Registers[0].1 	:= IO.HandlingStartCycle;			// Start programového cyklu překládacího manipulátoru [náběžná hrana]
+GVL.mb_Input_Registers[0].2 	:= IO.StorageLoad;					// Aktivace válce (ventilu) plošiny skladovacího manipulátoru DO naskladňovací polohy [0/1]
+GVL.mb_Input_Registers[0].3 	:= IO.StorageUnload;				// Aktivace válce (ventilu) plošiny skladovacího manipulátoru provyskladňovací polohy [0/1]
+GVL.mb_Input_Registers[0].4 	:= IO.ConvCanEnable;				// Povolení frekvenčního měniče motoru malého dopravníku [0/1]
+GVL.mb_Input_Registers[0].5 	:= IO.ConvCanForward;				// Aktivace chodu motoru malého dopravníku standardním směrem [0/1]
+GVL.mb_Input_Registers[0].6 	:= IO.ConvCanBackward;				// Aktivace chodu motoru malého dopravníku zpětným směrem [0/1]
+GVL.mb_Input_Registers[0].7 	:= IO.ConvBoxEnable;				// Povolení frekvenčního měniče motoru velkého dopravníku [0/1]
+GVL.mb_Input_Registers[0].8 	:= IO.ConvBoxForward;				// Aktivace chodu motoru velkého dopravníku standardním směrem [0/1]
+GVL.mb_Input_Registers[0].9 	:= IO.ConvBoxBackward;				// Aktivace chodu motoru velkého dopravníku zpětným směrem [0/1]
+GVL.mb_Input_Registers[0].10 	:= IO.ConvLoadEnable;				// Povolení frekvenčního měniče motoru zakládacího dopravníku [0/1]
+GVL.mb_Input_Registers[0].11 	:= IO.ConvLoadForward;				// Aktivace chodu motoru zakládacího dopravníku standardním směrem [0/1]
+GVL.mb_Input_Registers[0].12 	:= IO.ConvLoadBackward;				// Aktivace chodu motoru zakládacího dopravníku zpětným směrem [0/1]
+GVL.mb_Input_Registers[0].13 	:= IO.StorageSupportEnable;			// Povolení frekvenčního měniče motoru supportu skladovacího manipulátoru [0/1]
+GVL.mb_Input_Registers[0].14 	:= IO.StorageSupportForward;		// Aktivace chodu motoru supportu skladovacího manipulátoru standardním směrem [0/1]
+GVL.mb_Input_Registers[0].15 	:= IO.StorageSupportBackward;		// Aktivace chodu motoru supportu skladovacího manipulátoru zpětným směrem [0/1]
+GVL.mb_Input_Registers[1].0 	:= IO.StorageCarriageEnable;		// Povolení frekvenčního měniče motoru vozíku skladovacího manipuátoru [0/1]
+GVL.mb_Input_Registers[1].1 	:= IO.StorageCarriageForward;		// Aktivace chodu motoru vozíku skladovacího manipulátoru standardním směrem [0/1]
+GVL.mb_Input_Registers[1].2 	:= IO.StorageCarriageBackward;		// Aktivace chodu motoru vozíku skladovacího manipulátoru zpětným směrem [0/1]
+]]></ST>
+    </Implementation>
+    <LineIds Name="IOmap">
+      <LineId Id="6" Count="17" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="27" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,77 @@
+--! \file design.vhdl
+--! \brief Definice entity Clock_divider_synch_g a jeji behavioralni architektury
+--! \details Tuto entitu jsme v ramci predmetu BPC-LOS (logicke obvody a systemy, ustav automatizace a merici techniky, FEKT VUT) dostali.
+--! \authors Martin Stava 2013, Petr Petyovsky.
+
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+--! \brief Genericka entita delicka frekvence (pro pouziti v synchronnich sekvencnich obvodech)
+--! \details Delicka frekvence obsahuje vnitrni citac reagujici na nastupou hranu vstupu \a clk_in a ktery cita od hodnoty 0 do hodnoty \a MAX vcetne.
+--!   S dalsi nastupnou hranou dojde opetovnemu vynulovani hodnoty vnitrniho citace a cely cyklus se opakuje.
+--!   Delicka navic obsahuje vystupni port \a clk_out, na kterem generuje prubeh vydeleneho hodinoveho signalu a take vystup \a tc s vyznamem
+--!   \c TerminalCount, tj. byla dosazena maximalni hodnota na vnitrnim citaci a s dalsi nastupnou hranou dojde k jeho resetu.
+--!   Tato verze delicky je urcena pro pouziti v synchronnich sekvencnich obvodech. Obsahuje proto i vstupni port pro povoleni citani \a ce, vystupni port 
+--!   povolujici citani dalsim obvodum \a ceo a vstupni port pro synchronni reset delicky.
+--! \todo Doplnte chybejici casti definice portu entity Clock_divider_synch_g
+ENTITY Clock_divider_synch_g IS
+	GENERIC(
+		MAX: positive := 10-1			--! Genericky parametr urcujici maximalni hodnotu vnitrniho citace, po ktere dojde k jeho opetovnemu vynulovani
+		);
+	PORT(
+		clk_in : in std_logic;		--! Port pro vstup hodinoveho signalu \a clk_in
+		rst    : in std_logic;		--! Port pro vstup signalu synchronni reset \a rst
+		ce     : in std_logic;		--! Port pro vstup signalu pro povoleni citani \a ce (Clock Enable)
+		clk_out: out std_logic;		--! Port pro vystup vydeleneho hodinoveho signalu \a clk_out
+		tc     : out std_logic;		--! Port pro vystup \a tc (Terminal Count)
+		ceo    : out std_logic		--! Port pro vystup \a ceo (Clock Enable Out)
+		);
+END ENTITY Clock_divider_synch_g;
+
+--! \brief Behavioralni architektura genericke entity delicky frekvence (pro pouziti v synchronnich sekvencnich obvodech)
+ARCHITECTURE Behavioral OF Clock_divider_synch_g IS
+
+	SIGNAL cnt_i    : natural RANGE 0 TO MAX := 0;	--! Vnitrni hodnota citace
+	SIGNAL clk_out_i: std_logic := '0';				--! Vnitrni signal pro clk_out
+	SIGNAL ceo_i: std_logic := '0';
+BEGIN
+	--! Process zajistujici inkrementaci citace, urceni podminky pro jeho vynulovani po prichodu dalsi nastupne hrany.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu inkrementace citace a urceni podminky pro jeho nulovani.
+	--! \param[in] clk_in Vstupni hodinovy signal
+	counter_proc: PROCESS(clk_in,rst)
+	BEGIN
+		IF rising_edge(clk_in) THEN
+        	IF rst = '1' THEN
+            	cnt_i <= 0;  
+			ELSIF cnt_i < MAX THEN
+				cnt_i <= cnt_i + 1;
+			ELSE
+				cnt_i <= 0;
+			END IF;
+		END IF;
+	END PROCESS counter_proc;
+
+	--! Process zajistujici hodnotu vystupniho hodinoveho signalu \p clk_out_i
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu urceni hodnoty vydeleneho hodinoveho signalu \p clk_out_i.
+	--! \param[in] clk_in Vstupni hodinovy signal
+	clock_out_proc: PROCESS(clk_in,rst)
+	BEGIN
+		IF rising_edge(clk_in) THEN                
+            IF cnt_i = MAX / 2 THEN
+				clk_out_i <= '1';
+            
+			ELSIF cnt_i = MAX THEN
+				clk_out_i <= '0';
+			END IF;
+		END IF;
+	END PROCESS clock_out_proc;
+
+	clk_out <= TRANSPORT clk_out_i AFTER 0.1 ms; -- NEMAZAT: zamerne zpozdeni simulujici casove zpozdeni na vystupu clk_out
+	tc      <= '1' WHEN cnt_i = MAX ELSE
+	           '0';
+	
+	--! \todo Nahradte 'U'.
+	ceo	<= 	'1' WHEN (ce = '1' AND cnt_i = MAX) ELSE
+    		'0';
+    END ARCHITECTURE Behavioral;

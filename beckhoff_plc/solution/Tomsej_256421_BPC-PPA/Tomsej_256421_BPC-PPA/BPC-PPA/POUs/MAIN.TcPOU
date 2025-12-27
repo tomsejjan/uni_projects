@@ -1,0 +1,573 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <POU Name="MAIN" Id="{ea4da398-e343-4c9d-b28f-f0096319345c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR CONSTANT
+	//hlavni stavovy automat
+	WAITING_FOR_START : USINT := 0;
+	INIT_ROBOTS : USINT := 1; //inicializace handleru plechovek i velkeho robota
+	INIT_ROBOTS_WAIT : USINT := 2; //cekaci stav, protoze pouzivam casovac
+	GRAB_BOX : USINT := 3;
+	GRAB_BOX_WAIT : USINT := 4;
+	PUT_BOX : USINT := 5;
+	PUT_BOX_WAIT : USINT := 6;
+	DRIVE_BOX_TO_HANDLER : USINT := 7;
+	HANDLE_CAN1 : USINT := 8;
+	HANDLE_CAN1_WAIT : USINT := 9;
+	HANDLE_CAN2 : USINT := 10;
+	HANDLE_CAN2_WAIT : USINT := 11;
+	HANDLE_CAN3 : USINT := 12;
+	HANDLE_CAN3_WAIT : USINT := 13;
+	CANS_HANDLED : USINT := 14;
+	STORAGE_INIT : USINT := 15;
+	STORAGE_INIT_WAIT : USINT := 16;
+	GET_BOX_STORE : USINT := 17;
+	GET_BOX_STORE_WAIT : USINT := 18;
+	STORAGE_HANDLER_TO_BOX : USINT := 19;
+	STORAGE_HANDLER_TO_BOX_WAIT: USINT := 20;
+	LOAD_BOX : USINT := 21;
+	LOAD_BOX_WAIT : USINT := 22;
+	DRIVE_BOX_TO_STORE : USINT := 23;
+	DRIVE_BOX_TO_STORE_WAIT : USINT := 24;
+	BOX_UNLOAD : USINT := 25;
+	BOX_UNLOAD_WAIT : USINT := 26;
+	LAY_BOX : USINT := 27;
+	STORING_DONE : USINT := 28;
+END_VAR
+
+VAR
+	MainState : USINT := WAITING_FOR_START;
+	StartProcess : BOOL := FALSE;
+	CanSpeed : WORD := 1900;
+	ConvSpeed : WORD := 2800;
+	BoxAtTheEnd : BOOL := FALSE;
+	TON_DelayCycle : TON;
+	x : ARRAY [0..10] OF WORD := [25580, 23000, 20420, 17845, 15260, 12700, 10120, 7520, 4940, 2380, 750];
+	y : ARRAY [0..5] OF WORD := [23750, 19142, 14535, 9927, 5318, 710];
+	//FirstBoxDriven : BOOL := FALSE;
+	BoxesStored : USINT := 0;
+	ID : ARRAY [0..5] OF USINT := [2,5,6,3,9,4];
+	P_RegulatorX : P_regulator;
+	P_RegulatorY : P_regulator;
+	yPosition : WORD := 0;
+	xPosition : WORD := 0;
+	RoboticArmStart : BOOL := FALSE;
+	CentralStop : BOOL := FALSE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IOmap(); //namapuj vstupy a vystupy
+IF CentralStop THEN
+	IO.ConvBoxEnable := 0;
+	IO.ConvCanEnable := 0;
+	IO.StorageSupportEnable := 0;
+	IO.StorageCarriageEnable := 0;
+	IO.StorageSupportEnable := 0;
+END_IF
+
+CASE MainState OF
+	WAITING_FOR_START:
+		IF StartProcess THEN
+			MainState := INIT_ROBOTS;
+		END_IF
+		
+	INIT_ROBOTS:
+		IO.HandlingProgram := IO.RoboticArmProgram := 0;
+		IO.HandlingStartCycle := IO.RoboticArmStartCycle := 1;
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.RoboticArmMoving AND NOT IO.HandlingMoving THEN
+				IO.HandlingStartCycle := IO.RoboticArmStartCycle := 0;
+				MainState := INIT_ROBOTS_WAIT;
+			END_IF
+		END_IF
+		
+	INIT_ROBOTS_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0); 
+			MainState := GRAB_BOX;
+		END_IF
+		
+	GRAB_BOX:
+		IO.RoboticArmProgram := 1;
+		IO.RoboticArmStartCycle := 1;
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.RoboticArmMoving THEN
+				IO.RoboticArmStartCycle := 0;
+				MainState := GRAB_BOX_WAIT;
+			END_IF
+		END_IF
+		
+	GRAB_BOX_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			MainState := PUT_BOX;
+		END_IF
+	
+	PUT_BOX:
+		IO.RoboticArmProgram := 2;
+		IO.RoboticArmStartCycle := 1;
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN 
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.RoboticArmMoving THEN
+				IO.RoboticArmStartCycle := 0;
+				MainState := PUT_BOX_WAIT;
+			END_IF
+			
+		END_IF
+		
+	PUT_BOX_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			MainState := DRIVE_BOX_TO_HANDLER;
+		END_IF
+		
+	DRIVE_BOX_TO_HANDLER:
+		
+		IF IO.SensorBoxHandling THEN
+			IO.ConvBoxEnable := 0;
+			MainState := HANDLE_CAN1;
+		ELSE
+			IO.ConvBoxEnable := 1;
+		END_IF
+		
+		
+	HANDLE_CAN1:
+		IO.HandlingProgram := 1;
+		IO.HandlingStartCycle := 1;
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.HandlingMoving THEN
+				IO.HandlingStartCycle := 0; 
+				MainState := HANDLE_CAN1_WAIT;
+			END_IF
+		END_IF
+		
+	HANDLE_CAN1_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0); 
+			MainState := HANDLE_CAN2;
+		END_IF
+		
+	HANDLE_CAN2:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IO.HandlingProgram := 2;
+		IO.HandlingStartCycle := 1;
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.HandlingMoving THEN
+				IO.HandlingStartCycle := 0;
+				MainState := HANDLE_CAN2_WAIT;
+			END_IF
+		END_IF
+		
+	HANDLE_CAN2_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0); 
+			MainState := HANDLE_CAN3;
+		END_IF
+		
+	HANDLE_CAN3:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IO.HandlingProgram := 3;
+		IO.HandlingStartCycle := 1;
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.HandlingMoving THEN
+				IO.HandlingStartCycle := 0; 
+				MainState := HANDLE_CAN3_WAIT;
+			END_IF
+		END_IF
+		
+	HANDLE_CAN3_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			MainState := CANS_HANDLED;
+		END_IF	
+	
+	CANS_HANDLED:
+		MainState := GET_BOX_STORE;
+		IO.ConvBoxEnable := 1;
+	
+	STORAGE_INIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		
+		P_RegulatorX.SetpointPos := 750;
+		P_RegulatorY.SetpointPos := 1100;
+		
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0);
+			IF NOT IO.StorageCarriageMoving AND NOT IO.StorageSupportMoving THEN
+				
+				MainState := STORAGE_INIT_WAIT;
+			END_IF
+		
+		END_IF
+		
+	STORAGE_INIT_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0); 
+			MainState := GET_BOX_STORE;
+		END_IF
+		
+	GET_BOX_STORE:
+		IO.StorageCarriageEnable := IO.StorageSupportEnable := 1;
+		IF IO.SensorBoxStoring THEN
+			TON_DelayCycle(IN := TRUE, PT := T#1S);
+			P_RegulatorX.SetpointPos := 750;
+			P_RegulatorY.SetpointPos := 1100;	
+			IF TON_DelayCycle.Q THEN
+					IF NOT IO.StorageSupportMoving AND NOT IO.StorageCarriageMoving THEN
+						
+						MainState := GET_BOX_STORE_WAIT;
+					END_IF
+			END_IF
+		END_IF
+		
+	GET_BOX_STORE_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := 0); 
+			
+			MainState := STORAGE_HANDLER_TO_BOX;
+		END_IF
+		
+	STORAGE_HANDLER_TO_BOX:
+		TON_DelayCycle(IN := TRUE, PT := T#2S);
+		IF TON_DelayCycle.Q THEN
+			P_RegulatorY.SetpointPos := 2100;
+			IO.StorageLoad := 1;
+			MainState := STORAGE_HANDLER_TO_BOX_WAIT;
+		END_IF
+	
+	STORAGE_HANDLER_TO_BOX_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#2S);
+		IF TON_DelayCycle.Q THEN
+			
+			TON_DelayCycle(IN := FALSE);
+			MainState := LOAD_BOX;
+		END_IF
+		
+	LOAD_BOX:
+		TON_DelayCycle(IN := TRUE, PT := T#2S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := FALSE);
+			IO.StorageLoad := 0;
+			MainState := LOAD_BOX_WAIT;
+		END_IF
+		
+	LOAD_BOX_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#2S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := FALSE);
+			MainState := DRIVE_BOX_TO_STORE;
+		END_IF
+	
+		
+	DRIVE_BOX_TO_STORE: 
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := FALSE);
+				P_RegulatorX.SetpointPos := x[ID[BoxesStored]];
+				P_RegulatorY.SetpointPos := y[BoxesStored] + 400;
+			MainState := DRIVE_BOX_TO_STORE_WAIT; 
+		END_IF
+		
+	DRIVE_BOX_TO_STORE_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			TON_DelayCycle(IN := FALSE);
+			MainState := BOX_UNLOAD;
+		END_IF
+		
+	BOX_UNLOAD: 
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			IF NOT IO.StorageCarriageMoving AND NOT IO.StorageSupportMoving THEN
+				TON_DelayCycle(IN := FALSE);
+				IO.StorageUnload := 1;
+				MainState := BOX_UNLOAD_WAIT;
+			END_IF
+		END_IF
+	BOX_UNLOAD_WAIT:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+				TON_DelayCycle(IN := FALSE);
+				MainState := LAY_BOX;
+				P_RegulatorY.SetpointPos := P_RegulatorY.SetpointPos - 400;
+		END_IF
+		
+	LAY_BOX:
+		TON_DelayCycle(IN := TRUE, PT := T#1S);
+		IF TON_DelayCycle.Q THEN
+			IF NOT IO.StorageCarriageMoving AND NOT IO.StorageSupportMoving THEN
+				TON_DelayCycle(IN := FALSE);
+				IO.StorageUnload := 0;
+				IF BoxesStored < 5 THEN
+					MainState := GRAB_BOX;
+					BoxesStored := BoxesStored + 1;
+				ELSE
+					MainState := STORING_DONE;
+				END_IF
+			END_IF 
+			
+		END_IF
+		
+END_CASE
+
+IF IO.SensorBoxHandled THEN
+	BoxAtTheEnd := TRUE;
+END_IF
+
+//maly dopravnik
+IO.ConvCanSpeed := CanSpeed;
+IO.ConvCanForward := TRUE;
+IO.ConvCanEnable := NOT IO.SensorCanHandling AND MainState > WAITING_FOR_START;
+StartProcess := FALSE;
+
+//velky dopravnik
+IO.ConvBoxSpeed := ConvSpeed;
+IO.ConvBoxForward := TRUE;
+
+//zakladaci dopravnik
+IO.ConvLoadSpeed := ConvSpeed;
+IO.ConvLoadForward := TRUE;
+IO.ConvLoadEnable := BoxAtTheEnd AND NOT IO.SensorBoxStoring;
+
+P_RegulatorX(CurrentPos := IO.StorageSupportPosition, DecelerationLength := 15000);
+IO.StorageSupportSpeed := REAL_TO_WORD(P_RegulatorX.Speed);
+IO.StorageSupportForward := P_RegulatorX.MoveForward;
+IO.StorageSupportBackward := P_RegulatorX.MoveBackward;
+
+P_RegulatorY(CurrentPos := IO.StorageCarriagePosition, DecelerationLength := 17000);
+IO.StorageCarriageSpeed := REAL_TO_WORD(P_RegulatorY.Speed);
+IO.StorageCarriageForward := P_RegulatorY.MoveForward;
+IO.StorageCarriageBackward := P_RegulatorY.MoveBackward;]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="304" Count="1" />
+      <LineId Id="1601" Count="1" />
+      <LineId Id="1604" Count="3" />
+      <LineId Id="1603" Count="0" />
+      <LineId Id="1610" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="186" Count="0" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="191" Count="1" />
+      <LineId Id="236" Count="0" />
+      <LineId Id="210" Count="3" />
+      <LineId Id="217" Count="1" />
+      <LineId Id="220" Count="1" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="219" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="226" Count="1" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="228" Count="0" />
+      <LineId Id="237" Count="0" />
+      <LineId Id="234" Count="1" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="240" Count="1" />
+      <LineId Id="239" Count="0" />
+      <LineId Id="291" Count="1" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="242" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="268" Count="3" />
+      <LineId Id="267" Count="0" />
+      <LineId Id="258" Count="0" />
+      <LineId Id="274" Count="5" />
+      <LineId Id="295" Count="1" />
+      <LineId Id="298" Count="0" />
+      <LineId Id="297" Count="0" />
+      <LineId Id="299" Count="0" />
+      <LineId Id="281" Count="6" />
+      <LineId Id="273" Count="0" />
+      <LineId Id="334" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="300" Count="1" />
+      <LineId Id="307" Count="0" />
+      <LineId Id="318" Count="0" />
+      <LineId Id="308" Count="0" />
+      <LineId Id="317" Count="0" />
+      <LineId Id="316" Count="0" />
+      <LineId Id="333" Count="0" />
+      <LineId Id="594" Count="0" />
+      <LineId Id="319" Count="0" />
+      <LineId Id="322" Count="0" />
+      <LineId Id="326" Count="0" />
+      <LineId Id="631" Count="0" />
+      <LineId Id="327" Count="1" />
+      <LineId Id="358" Count="1" />
+      <LineId Id="361" Count="0" />
+      <LineId Id="360" Count="0" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="663" Count="0" />
+      <LineId Id="658" Count="4" />
+      <LineId Id="593" Count="0" />
+      <LineId Id="667" Count="0" />
+      <LineId Id="572" Count="9" />
+      <LineId Id="543" Count="0" />
+      <LineId Id="669" Count="0" />
+      <LineId Id="582" Count="0" />
+      <LineId Id="670" Count="3" />
+      <LineId Id="668" Count="0" />
+      <LineId Id="675" Count="0" />
+      <LineId Id="544" Count="1" />
+      <LineId Id="498" Count="0" />
+      <LineId Id="527" Count="0" />
+      <LineId Id="566" Count="4" />
+      <LineId Id="546" Count="0" />
+      <LineId Id="512" Count="0" />
+      <LineId Id="684" Count="0" />
+      <LineId Id="679" Count="4" />
+      <LineId Id="677" Count="1" />
+      <LineId Id="463" Count="0" />
+      <LineId Id="687" Count="0" />
+      <LineId Id="691" Count="0" />
+      <LineId Id="830" Count="0" />
+      <LineId Id="685" Count="0" />
+      <LineId Id="839" Count="0" />
+      <LineId Id="901" Count="0" />
+      <LineId Id="910" Count="0" />
+      <LineId Id="1543" Count="0" />
+      <LineId Id="911" Count="0" />
+      <LineId Id="908" Count="0" />
+      <LineId Id="881" Count="0" />
+      <LineId Id="883" Count="0" />
+      <LineId Id="1097" Count="0" />
+      <LineId Id="914" Count="0" />
+      <LineId Id="885" Count="0" />
+      <LineId Id="882" Count="0" />
+      <LineId Id="886" Count="0" />
+      <LineId Id="895" Count="0" />
+      <LineId Id="889" Count="0" />
+      <LineId Id="917" Count="3" />
+      <LineId Id="915" Count="0" />
+      <LineId Id="958" Count="0" />
+      <LineId Id="956" Count="0" />
+      <LineId Id="1286" Count="0" />
+      <LineId Id="1105" Count="0" />
+      <LineId Id="1545" Count="0" />
+      <LineId Id="1332" Count="1" />
+      <LineId Id="1279" Count="0" />
+      <LineId Id="1089" Count="3" />
+      <LineId Id="1079" Count="0" />
+      <LineId Id="1083" Count="0" />
+      <LineId Id="1274" Count="0" />
+      <LineId Id="968" Count="0" />
+      <LineId Id="970" Count="2" />
+      <LineId Id="1178" Count="0" />
+      <LineId Id="973" Count="0" />
+      <LineId Id="969" Count="0" />
+      <LineId Id="1110" Count="0" />
+      <LineId Id="1108" Count="1" />
+      <LineId Id="1111" Count="1" />
+      <LineId Id="1344" Count="0" />
+      <LineId Id="1176" Count="0" />
+      <LineId Id="1113" Count="0" />
+      <LineId Id="1156" Count="0" />
+      <LineId Id="1166" Count="0" />
+      <LineId Id="1170" Count="1" />
+      <LineId Id="1175" Count="0" />
+      <LineId Id="1372" Count="0" />
+      <LineId Id="1177" Count="0" />
+      <LineId Id="1167" Count="0" />
+      <LineId Id="1378" Count="0" />
+      <LineId Id="1373" Count="2" />
+      <LineId Id="1389" Count="0" />
+      <LineId Id="1376" Count="0" />
+      <LineId Id="1379" Count="0" />
+      <LineId Id="1377" Count="0" />
+      <LineId Id="1386" Count="0" />
+      <LineId Id="1380" Count="0" />
+      <LineId Id="1382" Count="1" />
+      <LineId Id="1390" Count="0" />
+      <LineId Id="1385" Count="0" />
+      <LineId Id="1381" Count="0" />
+      <LineId Id="1387" Count="0" />
+      <LineId Id="1346" Count="0" />
+      <LineId Id="1154" Count="1" />
+      <LineId Id="1157" Count="0" />
+      <LineId Id="1225" Count="0" />
+      <LineId Id="1163" Count="0" />
+      <LineId Id="1347" Count="0" />
+      <LineId Id="1509" Count="0" />
+      <LineId Id="1224" Count="0" />
+      <LineId Id="1443" Count="0" />
+      <LineId Id="1226" Count="0" />
+      <LineId Id="1440" Count="0" />
+      <LineId Id="1369" Count="0" />
+      <LineId Id="1441" Count="0" />
+      <LineId Id="1444" Count="0" />
+      <LineId Id="1442" Count="0" />
+      <LineId Id="1448" Count="0" />
+      <LineId Id="1445" Count="2" />
+      <LineId Id="1454" Count="0" />
+      <LineId Id="1449" Count="0" />
+      <LineId Id="1453" Count="0" />
+      <LineId Id="1451" Count="0" />
+      <LineId Id="1458" Count="0" />
+      <LineId Id="1450" Count="0" />
+      <LineId Id="1515" Count="0" />
+      <LineId Id="1523" Count="1" />
+      <LineId Id="1546" Count="0" />
+      <LineId Id="1528" Count="0" />
+      <LineId Id="1531" Count="0" />
+      <LineId Id="1522" Count="0" />
+      <LineId Id="1530" Count="0" />
+      <LineId Id="1510" Count="0" />
+      <LineId Id="1514" Count="0" />
+      <LineId Id="1517" Count="0" />
+      <LineId Id="1532" Count="3" />
+      <LineId Id="1537" Count="0" />
+      <LineId Id="1539" Count="2" />
+      <LineId Id="1538" Count="0" />
+      <LineId Id="1536" Count="0" />
+      <LineId Id="1520" Count="0" />
+      <LineId Id="1519" Count="0" />
+      <LineId Id="1516" Count="0" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="832" Count="0" />
+      <LineId Id="831" Count="0" />
+      <LineId Id="833" Count="1" />
+      <LineId Id="897" Count="0" />
+      <LineId Id="149" Count="1" />
+      <LineId Id="193" Count="1" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="835" Count="0" />
+      <LineId Id="311" Count="1" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="837" Count="0" />
+      <LineId Id="836" Count="0" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="838" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="904" Count="0" />
+      <LineId Id="1336" Count="2" />
+      <LineId Id="1340" Count="0" />
+      <LineId Id="1334" Count="0" />
+      <LineId Id="1341" Count="1" />
+      <LineId Id="1335" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

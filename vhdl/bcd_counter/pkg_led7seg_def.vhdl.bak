@@ -1,0 +1,73 @@
+--! \file pkg_led7seg_def.vhdl
+--! \brief Definice subtypu a konstant pro segmenty i anody 7-segmentoveho displeje na kitu NEXYS3/BASYS3
+--! \todo Vyplnit informace o autorovi v hlavicce souboru !!!
+--! $Id: pkg_led7seg_def.vhdl 2786 2024-10-10 13:38:28Z petyovsky $
+
+-- BPC-LOS Laboratorni uloha c.6 - ukol c. 4b
+-- Prijmeni a jmeno autora: (Tomšej Jan)
+-- VUT Login autora: (256421)
+-- ID autora: (256421)
+-- Termin cviceni: (streda15)
+-- Datum realizace: (20.11.2024)
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+--! \brief Balik definuje subtypy a konstanty pro 7-segmentovy displej na kitu NEXYS3/BASYS3
+--! \details Balik obsahuje definici subtypu a konstant pro 7-segmentovy displej, ktere budeme vyuzivat.
+--! \todo Vhodne upravte "U" hodnoty v definici konstant
+PACKAGE pkg_led7seg_def IS
+
+	--! Datovy typ: index pozice (0-3) na 7-segmentovem displeji
+	SUBTYPE Pos_t IS std_logic_vector(1 DOWNTO 0);
+
+	-- Konstanty pro index pozice:        (0-3)
+	CONSTANT pos_1_c:            Pos_t := "00";				--! Index pozice: \c 10**0, tj. jednotky
+	CONSTANT pos_10_c:           Pos_t := "01";				--! Index pozice: \c 10**1, tj. desitky
+	CONSTANT pos_100_c:          Pos_t := "10";				--! Index pozice: \c 10**2, tj. stovky
+	CONSTANT pos_1000_c:         Pos_t := "11";				--! Index pozice: \c 10**3, tj. tisice
+
+	--! Datovy typ: anody 7-segmentoveho displeje
+	SUBTYPE Anodes_t IS std_logic_vector(3 DOWNTO 0);
+
+	-- Konstanty pro volbu anody displeje:   "3210"
+	CONSTANT anodes_none_c:      Anodes_t := "1111";		--! Nezvolena zadna z anod pozice 7-segmentoveho displeje
+	CONSTANT anodes_1_c:         Anodes_t := "1110";		--! Zvolena anoda pozice jednotek na displeji
+	CONSTANT anodes_10_c:        Anodes_t := "1101";		--! Zvolena anoda pozice desitek na displeji
+	CONSTANT anodes_100_c:       Anodes_t := "1011";		--! Zvolena anoda pozice stovek na displeji
+	CONSTANT anodes_1000_c:      Anodes_t := "0111";		--! Zvolena anoda pozice tisicu na displeji
+
+
+	--! Datovy typ: segmenty `gfedcba` tvorici symbol na 7-segmentovem displeji
+	SUBTYPE Segments_t IS std_logic_vector(6 DOWNTO 0);
+
+	-- Konstanty pro definici symbolu displeje:"gfedcba"
+	CONSTANT segments_none_c:    Segments_t := "1111111";	--! Nesviti zadny segment displeje
+	CONSTANT segments_less_c:    Segments_t := "0100111";	--! Symbol \c < na segmentech displeje
+	CONSTANT segments_equal_c:   Segments_t := "0110110";	--! Symbol \c = na segmentech displeje
+	CONSTANT segments_greater_c: Segments_t := "0110011";	--! Symbol \c > na segmentech displeje
+	CONSTANT segments_minus_c:   Segments_t := "0111111";	--! Symbol \c - na segmentech displeje
+	CONSTANT segments_0_c:       Segments_t := "1000000";	--! Symbol \c 0 na segmentech displeje
+	CONSTANT segments_1_c:       Segments_t := "1111001";	--! Symbol \c 1 na segmentech displeje
+	CONSTANT segments_2_c:       Segments_t := "0100100";	--! Symbol \c 2 na segmentech displeje
+	CONSTANT segments_3_c:       Segments_t := "0110000";	--! Symbol \c 3 na segmentech displeje
+	CONSTANT segments_4_c:       Segments_t := "0011001";	--! Symbol \c 4 na segmentech displeje
+	CONSTANT segments_5_c:       Segments_t := "0010010";	--! Symbol \c 5 na segmentech displeje
+	CONSTANT segments_6_c:       Segments_t := "0000010";	--! Symbol \c 6 na segmentech displeje
+	CONSTANT segments_7_c:       Segments_t := "1111000";	--! Symbol \c 7 na segmentech displeje
+	CONSTANT segments_8_c:       Segments_t := "0000000";	--! Symbol \c 8 na segmentech displeje
+	CONSTANT segments_9_c:       Segments_t := "0010000";	--! Symbol \c 9 na segmentech displeje
+	CONSTANT segments_A_c:       Segments_t := "0001000";	--! Symbol \c A na segmentech displeje
+	CONSTANT segments_B_c:       Segments_t := "0000011";	--! Symbol \c B na segmentech displeje
+	CONSTANT segments_C_c:       Segments_t := "1000110";	--! Symbol \c C na segmentech displeje
+	CONSTANT segments_D_c:       Segments_t := "0100001";	--! Symbol \c D na segmentech displeje
+	CONSTANT segments_E_c:       Segments_t := "0000110";	--! Symbol \c E na segmentech displeje
+	CONSTANT segments_F_c:       Segments_t := "0001110";	--! Symbol \c F na segmentech displeje
+
+	-- Konstanty pro definici symbolu radove tecky displeje umistene na 7. bitu
+	CONSTANT dp_on_c:            std_logic := '0';			--! Aktivni segment desetinne tecky (decimal point)
+	CONSTANT dp_off_c:           std_logic := '1';			--! Neaktivni segment desetinne tecky (decimal point)
+
+END pkg_led7seg_def;
+
+

@@ -1,0 +1,156 @@
+--! \file testbench.vhdl
+--! \brief Definice entity a architektury Testbench urcene pro testovani DUT (Device Under Test) komponenty: Led7seg_counter_synch_bcd
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE std.env.finish;				-- Zpristupneni procedury finish z baliku env, ktera zajistuje ukonceni simulace
+--! Zpristupnen cely balik \c pkg_bpc_los z pracovni knihovny \c work pro podporu zobrazeni stavu 7-seg displeje
+USE work.pkg_bpc_los.ALL;
+--! Zpristupneni prevodnich funkci pro 7-segmentovy displej
+USE work.pkg_led7seg_decoders.ALL;
+
+--! \brief Testbench pro entitu: Led7seg_counter_synch_bcd
+ENTITY Testbench IS
+END ENTITY Testbench;
+
+--! \brief Behavioralni popis architektury entity Testbench pro testovani obvodu Led7seg_counter_synch_bcd
+ARCHITECTURE Behavioral OF Testbench IS
+
+	CONSTANT clock_period_c: delay_length := 1 ms;	--! Perioda hodinoveho signalu clk (tj. 1 kHz)
+
+	--! \brief DUT (Device Under Test) komponenta Led7seg_counter_synch_bcd
+	COMPONENT Led7seg_counter_synch_bcd
+	PORT(
+		clk : in std_logic;							-- Deklarace vstupu: clk
+		rst : in std_logic;							-- Deklarace vstupu: rst
+		load: in std_logic;							-- Deklarace vstupu: load
+		ce  : in std_logic;							-- Deklarace vstupu: ce
+		d   : in std_logic_vector(3 downto 0);		-- Deklarace vstupu: d
+		seg : out std_logic_vector(7 downto 0);						-- Deklarace vystupu: seg
+		an  : out std_logic_vector(3 downto 0)		-- Deklarace vystupu: an
+		);
+	END COMPONENT Led7seg_counter_synch_bcd;
+
+	-- Inputs
+	SIGNAL clk_in, rst_in: std_logic := '0';		--! Signaly pripojene na vstupy testovane komponenty
+	SIGNAL load_in: std_logic := '0';				--! Signaly pripojene na vstupy testovane komponenty
+	SIGNAL ce_in: std_logic := '1';					--! Signal pripojeny na vstup testovane komponenty
+	SIGNAL d_in: std_logic_vector(3 DOWNTO 0) := x"0";	--! Signal vektor [3:0] pripojeny na vstup \a d[3:0] testovane komponenty
+
+	-- Outputs
+	SIGNAL seg_out: std_logic_vector(7 DOWNTO 0);	--! Signaly pripojene na vystupy testovane komponenty pro segmenty displeje
+	SIGNAL an_out: std_logic_vector(3 DOWNTO 0);	--! Signaly pripojene na vystupy testovane komponenty pro anody displeje
+	SIGNAL assert_moment: std_logic := '0';			--! Signal s impulzy signalizujici okamziky kontrolnich podminek
+
+	-- Mapping alias to the internal signal and port with VHDL-2008 External name feature
+	ALIAS dut_val_bcd_i IS							--! Pripojeni na vnitrni signal \p bcd_val_i testovane komponenty Led7seg_counter_synch_bcd
+		<< SIGNAL .Testbench.dut.val_bcd_i: std_logic_vector(3 DOWNTO 0) >>;
+
+BEGIN
+	--! Instanciace komponenty Led7seg_counter_synch_bcd jako DUT a pripojeni jejich portu na jednotlive stimuly
+	dut: Led7seg_counter_synch_bcd
+		PORT MAP(
+			clk  => clk_in,
+			rst  => rst_in,
+			load => load_in,
+			ce   => ce_in,
+			d    => d_in,
+			seg  => seg_out,
+			an   => an_out
+			);
+
+	-- Clock process definition
+	--! Proces entity Testbench vytvarejici hodinove impulsy
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu vytvarejiciho 280 period na signalu \p clk_in.
+	clock_proc: PROCESS
+	BEGIN
+		WAIT FOR 5 ms;	-- Wait for 5 ms before start of simulation
+		FOR i IN 1 TO 280 LOOP
+			clk_in <= '1';
+			WAIT FOR clock_period_c / 2;
+			clk_in <= '0';
+			WAIT FOR clock_period_c / 2;
+		END LOOP;
+		WAIT FOR 10 ms;	-- Hold for 10 ms before end of simulation
+		WAIT;
+	END PROCESS clock_proc;
+
+	-- Stimulus process definition
+	--! Testovaci proces entity Testbench vytvarejici jednotlive stimuly.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky testovaciho procesu vcetne popisu jednotlivych stimulu a testovacich podminek.
+	testbench_proc: PROCESS
+		VARIABLE symbol_on_segments_v: std_logic_vector(7 DOWNTO 0) := X"00";
+	BEGIN
+		REPORT "Test start." SEVERITY note;
+
+		WAIT FOR 5 ms;		-- Wait for 5 ms before start of simulation
+		WAIT ON clk_in UNTIL clk_in = '1';
+		FOR i IN 1 TO 7 LOOP
+			--WAIT ON clk_in UNTIL clk_in = '0';
+			led7seg_show(an_out, seg_out(6 DOWNTO 0), seg_out(7));
+			symbol_on_segments_v := seg_out;
+			FOR j IN 1 TO 10 LOOP
+				WAIT ON clk_in UNTIL clk_in = '0';
+			END LOOP;
+		END LOOP;
+
+		REPORT "Resetujeme...";
+		rst_in <= '1';
+		FOR j IN 1 TO 11 LOOP
+			WAIT ON clk_in UNTIL clk_in = '0';
+			assert_moment <= NOT assert_moment, '0' AFTER 10 ns;
+			ASSERT dut_val_bcd_i = X"0"
+				REPORT "Nefunguje synch reset BCD citace" SEVERITY error;
+			ASSERT seg_out(6 DOWNTO 0) = led7seg_bcd_to_segments(X"0")
+				REPORT "Chybna hodnota na displeji pro synch reset" SEVERITY error;
+		END LOOP;
+
+		rst_in <= '0';
+		WAIT ON clk_in UNTIL clk_in = '0';
+		REPORT "Konec resetovani...";
+
+		REPORT "Testujeme CE...";
+		FOR i IN 1 TO 19 LOOP
+			NULL;	-- Doxygen vhdlflow parser crash hotfix
+			led7seg_show(an_out, seg_out(6 DOWNTO 0), ce_in);
+			FOR j IN 1 TO 10 LOOP
+				WAIT ON clk_in UNTIL clk_in = '1';
+			END LOOP;
+
+			IF(i MOD 2 = 0) THEN
+				ce_in <= NOT ce_in;
+			END IF;
+
+			IF ce_in = '1' THEN
+				--REPORT "Pracujeme...ce = 1";
+				symbol_on_segments_v := seg_out;
+			ELSIF ce_in = '0' THEN
+				--REPORT "Stojime... ce = 0";
+				assert_moment <= NOT assert_moment, '0' AFTER 10 ns;
+				ASSERT seg_out = symbol_on_segments_v
+					REPORT "Nefunguje CE" SEVERITY error;
+			END IF;
+		END LOOP;
+		REPORT "Konec testu CE...";
+
+		REPORT "Testujeme synch load hodnoty 5...";
+		d_in <= x"5";
+		WAIT ON clk_in UNTIL clk_in = '0';
+		load_in <= '1';
+		WAIT ON clk_in UNTIL clk_in = '0';
+		load_in <= '0';
+
+		FOR j IN 1 TO 5 LOOP
+			assert_moment <= NOT assert_moment, '0' AFTER 10 ns;
+			ASSERT dut_val_bcd_i = d_in
+				REPORT "Nefunguje synch load BCD citace" SEVERITY error;
+			ASSERT seg_out(6 DOWNTO 0) = led7seg_bcd_to_segments(X"5")
+				REPORT "Chybna hodnota na displeji pro synch load" SEVERITY error;
+			led7seg_show(an_out, seg_out(6 DOWNTO 0), seg_out(7));
+			WAIT ON clk_in UNTIL clk_in = '0';
+		END LOOP;
+
+		REPORT "Test done." SEVERITY note;
+		finish;					-- Procedura z baliku env zajistujici ukonceni simulace
+	END PROCESS testbench_proc;
+END ARCHITECTURE Behavioral;

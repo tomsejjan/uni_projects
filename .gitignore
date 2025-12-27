@@ -1,0 +1,4 @@
+# Ignoruj vystupy Doxygenu
+html/
+latex/
+*.db

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
+  <GVL Name="IO" Id="{a8a15931-550b-48e4-9627-5af7c3f27be3}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	// Analog Inputs
+	StorageSupportPosition	: WORD;	// Pozice supportu skladovacího manipulátoru [0..27648]
+	StorageCarriagePosition	: WORD;	// Pozice vozíku skladovacího manipulátoru [0..27648]
+	
+	// Digital Inputs
+	SensorBoxStart			: BOOL;	// Sensor přítomnosti bedny na vstupu velkého dopravníkového pásu [0/1]
+	SensorBoxHandling		: BOOL;	// Sensor přítomnosti bedny v pracovním prostoru překládacího manipulátoru [0/1]
+	SensorBoxHandled		: BOOL;	// Sensor přítomnosti bedny na konci velkého dopravníkového pásu [0/1]
+	SensorBoxStoring		: BOOL;	// Sensor přítomnosti bedny na naskladňovací pozici zakládacího dopravníku [0/1]
+	SensorCanNew			: BOOL;	// Sensor přítomnosti nové plechovky na malém dopravníkovém pásu [0/1]
+	SensorCanPrepare		: BOOL;	// Sensor přítomnosti plechovky uprostřed malého dopravníkového pásu [0/1]
+	SensorCanHandling		: BOOL;	// Sensor přítomnosti plechovky v pracovním prostoru překládacího manipulátoru [0/1]
+	ConvCanMoving			: BOOL;	// Signalizace pohybu motoru malého dopravníkového pásu [0/1]
+	ConvBoxMoving			: BOOL;	// Signalizace pohybu motoru velkého dopravníkového pásu [0/1]
+	ConvLoadMoving			: BOOL;	// Signalizace pohybu motoru zakládacího dopravníkového pásu [0/1]
+	StorageSupportMoving	: BOOL;	// Signalizace pohybu motoru supportu skladovacího manipulátoru [0/1]
+	StorageCarriageMoving	: BOOL;	// Signalizace pohybu motoru vozíku skladovacího manipulátoru [0/1]
+	RoboticArmMoving		: BOOL;	// Signalizace vykonávání programového cyklu 6-osého robotického manipulátoru [0/1]
+	HandlingMoving			: BOOL;	// Signalizace vykonávání programového cyklu překládacího manipulátoru [0/1]
+
+	// Analog Outputs
+	RoboticArmProgram		: WORD;	// Číslo programu pro vykonání 6-osým manipulátorem [0 .. základní pozice, 1 ..uchopení bedny, 2 .. položení bedny na pás]
+	HandlingProgram			: WORD;	// Číslo programu pro vykonání překládacím manipulátorem [0 .. základní pozice, 1 .. přenesení na první pozici, 2 .. přenesení na druhou pozici, 3 .. přenesení na třetí pozici]
+	ConvCanSpeed			: WORD;	// Rychlost motoru malého dopravníku [0..27648]
+	ConvBoxSpeed			: WORD;	// Rychlost motoru velkého dopravníku [0..27648]
+	ConvLoadSpeed			: WORD;	// Rychlost motoru zakládacího dopravníku [0..27648]
+	StorageSupportSpeed		: WORD;	// Rychlost motoru supportu skladovacího manipulátoru [0..27648]
+	StorageCarriageSpeed	: WORD;	// Rychlost motoru vozíku skladovacího manipulátoru [0..27648]
+	
+	// Digital Outputs
+	RoboticArmStartCycle	: BOOL;	// Start programového cyklu 6-osého manipulátoru [náběžná hrana]
+	HandlingStartCycle		: BOOL;	// Start programového cyklu překládacího manipulátoru [náběžná hrana]
+	StorageLoad				: BOOL;	// Aktivace válce (ventilu) plošiny skladovacího manipulátoru DO naskladňovací polohy [0/1]
+	StorageUnload			: BOOL;	// Aktivace válce (ventilu) plošiny skladovacího manipulátoru provyskladňovací polohy [0/1]
+	ConvCanEnable			: BOOL;	// Povolení frekvenčního měniče motoru malého dopravníku [0/1]
+	ConvCanForward			: BOOL;	// Aktivace chodu motoru malého dopravníku standardním směrem [0/1]
+	ConvCanBackward			: BOOL;	// Aktivace chodu motoru malého dopravníku zpětným směrem [0/1]
+	ConvBoxEnable			: BOOL;	// Povolení frekvenčního měniče motoru velkého dopravníku [0/1]
+	ConvBoxForward			: BOOL;	// Aktivace chodu motoru velkého dopravníku standardním směrem [0/1]
+	ConvBoxBackward			: BOOL;	// Aktivace chodu motoru velkého dopravníku zpětným směrem [0/1]
+	ConvLoadEnable			: BOOL;	// Povolení frekvenčního měniče motoru zakládacího dopravníku [0/1]
+	ConvLoadForward			: BOOL;	// Aktivace chodu motoru zakládacího dopravníku standardním směrem [0/1]
+	ConvLoadBackward		: BOOL;	// Aktivace chodu motoru zakládacího dopravníku zpětným směrem [0/1]
+	StorageSupportEnable	: BOOL;	// Povolení frekvenčního měniče motoru supportu skladovacího manipulátoru [0/1]
+	StorageSupportForward	: BOOL;	// Aktivace chodu motoru supportu skladovacího manipulátoru standardním směrem [0/1]
+	StorageSupportBackward	: BOOL;	// Aktivace chodu motoru supportu skladovacího manipulátoru zpětným směrem [0/1]
+	StorageCarriageEnable	: BOOL;	// Povolení frekvenčního měniče motoru vozíku skladovacího manipuátoru [0/1]
+	StorageCarriageForward	: BOOL;	// Aktivace chodu motoru vozíku skladovacího manipulátoru standardním směrem [0/1]
+	StorageCarriageBackward	: BOOL;	// Aktivace chodu motoru vozíku skladovacího manipulátoru zpětným směrem [0/1]	
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

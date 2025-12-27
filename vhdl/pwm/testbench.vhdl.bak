@@ -1,0 +1,157 @@
+--! \file testbench.vhdl
+--! \todo Vyplnte informace o autorovi v hlavicce souboru !!!
+--! \brief Definice entity a architektury Testbench urcene pro testovani DUT (Device Under Test) komponenty: Generator_pwm
+--! \todo Doplnte pripojeni DUT komponent na jednotlive stimuly pomoci jmenne asociace
+--! $Id: testbench.vhdl 2885 2024-11-23 10:58:09Z petyovsky $
+
+-- BPC-LOS Laboratorni uloha c.7 - ukol c. 2
+-- Prijmeni a jmeno autora: (Tomšej Jan)
+-- VUT Login autora: (256421)
+-- ID autora: (256421)
+-- Termin cviceni: (streda15)
+-- Datum realizace: (4.12.2024)
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+USE std.env.finish;				-- Zpristupneni procedury finish z baliku env, ktera zajistuje ukonceni simulace
+
+--! \brief Testbench pro entitu: Generator_pwm
+--! \details Definice entity Testbench pro testovani generatoru PWM
+ENTITY Testbench IS
+END ENTITY Testbench;
+
+--! \brief Behavioralni popis architektury entity Testbench pro testovani obvodu Generator_pwm
+ARCHITECTURE Behavioral OF Testbench IS
+
+	CONSTANT clock_period_c: delay_length := 1 ms;	--! Perioda hodinoveho signalu clk (tj. 1 kHz)
+
+	--! \brief DUT (Device Under Test) komponenta Generator_pwm
+	--! \todo Doplnte chybejici casti definice portu komponenty Generator_pwm
+	COMPONENT Generator_pwm IS
+		PORT(
+			clk    : in std_logic;					-- Deklarace vstupu: clk
+			ce     : in std_logic;					-- Deklarace vstupu: ce
+			pwm_val: in std_logic_vector(2 DOWNTO 0);	-- Deklarace vstupu: pwm_val
+			pwm_out: out std_logic						-- Deklarace vystupu: pwm_out
+			);
+	END COMPONENT Generator_pwm;
+
+	-- Inputs
+	SIGNAL clk_in: std_logic := '0';			--! Signaly pripojene na vstupy testovane komponenty
+	SIGNAL ce_in : std_logic := '1';			--! Signal pripojen na vstupy testovane komponenty
+	SIGNAL pwm_val_in: std_logic_vector(2 DOWNTO 0) := (OTHERS => '0'); --! Signal vektor [2:0] pripojeny na vstup \a pwm_val[2:0] testovane komponenty
+
+	-- Outputs
+	SIGNAL pwm_out: std_logic;					--! Signal pripojeny na vystup testovane komponenty predstavujici PWM vystup
+
+BEGIN
+	--! Instanciace komponenty Generator_pwm jako DUT a pripojeni jejich portu na jednotlive stimuly
+	--! \todo Doplnte chybejici casti jmenneho prirazeni ke komponente Generator_pwm
+	dut: Generator_pwm
+		PORT MAP(
+			clk     => clk_in,
+			ce      => ce_in,
+			pwm_val => pwm_val_in,
+			pwm_out => pwm_out
+			);
+
+	-- Clock process definition
+	--! Proces entity Testbench vytvarejici hodinove impulzy
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu vytvarejiciho 180 period na signalu \p clk_in.
+	clock_proc: PROCESS
+	BEGIN
+		WAIT FOR 5 ms;		-- Wait for 5 ms before start of simulation
+		FOR i IN 1 TO 180 LOOP
+			clk_in <= '1';
+			WAIT FOR clock_period_c / 2;
+			clk_in <= '0';
+			WAIT FOR clock_period_c / 2;
+		END LOOP;
+		WAIT FOR 10 ms;		-- Hold for 10 ms before end of simulation
+		WAIT;
+	END PROCESS clock_proc;
+
+	-- Stimulus process definition
+	--! Testovaci process entity Testbench vytvarejici jednotlive stimuly.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky testovaciho procesu vcetne popisu jednotlivych stimulu a testovacich podminek.
+	testbench_proc: PROCESS
+	BEGIN
+		REPORT "Test start." SEVERITY note;
+
+		-- Cekame na prvni nastupnou hranu na signalu clk_in
+		WAIT ON clk_in UNTIL clk_in = '1';
+		WAIT FOR 12.5 ms;		-- Hold for 12.5 ms
+
+		pwm_val_in <= std_logic_vector(to_unsigned(1, pwm_val_in'length));
+		WAIT FOR 0.5 ms;		-- Hold for 0.5 ms
+
+		-- vystup pwm_out je v '0' a nezmenil svuj stav uz alespon 7 ms
+		ASSERT pwm_out = '0' AND pwm_out'stable(7 ms)
+			REPORT "Chybna hodnota pwm vystupu pri val = 0" SEVERITY error;
+
+		WAIT FOR 13.5 ms;		-- Hold for 13.5 ms
+		pwm_val_in <= std_logic_vector(to_unsigned(6, pwm_val_in'length));
+		WAIT FOR 0.5 ms;		-- Hold for 0.5 ms
+
+		-- vystup pwm_out je v '0' a posledni zmena vystupu probehla pred 5 ms
+		ASSERT pwm_out = '0' AND pwm_out'last_event = 5 ms
+			REPORT "Chybna hodnota pwm vystupu pri val = 1" SEVERITY error;
+
+		WAIT FOR 13.5 ms;		-- Hold for 13.5 ms
+		pwm_val_in <= std_logic_vector(to_unsigned(7, pwm_val_in'length));
+		WAIT FOR 0.5 ms;		-- Hold for 0.5 ms
+
+		-- vystup pwm_out je v '1' a posledni zmena vystupu probehla pred 6 ms
+		ASSERT pwm_out = '1' AND pwm_out'last_event = 6 ms
+			REPORT "Chybna hodnota pwm vystupu pri val = 6" SEVERITY error;
+
+		WAIT FOR 13.5 ms;		-- Hold for 13.5 ms
+		pwm_val_in <= std_logic_vector(to_unsigned(3, pwm_val_in'length));
+		WAIT FOR 0.5 ms;		-- Hold for 0.5 ms
+
+		-- vystup pwm_out je v '1' a nezmenil svuj stav uz alespon 7 ms
+		ASSERT pwm_out = '1' AND pwm_out'stable(7 ms)
+			REPORT "Chybna hodnota pwm vystupu pri val = 7" SEVERITY error;
+
+		REPORT "Testujeme CE = 0";
+		--pwm_val_in <= std_logic_vector(to_unsigned(3, pwm_val_in'length));
+		ce_in <= '0' AFTER 50 ns;	 -- Prirazeni se zpozdenim 50 ns
+		WAIT FOR 7 ms;		-- Hold for 7 ms
+		-- vystup pwm_out je v '1' a nezmenil svuj stav uz alespon 7 ms
+		ASSERT pwm_out = '1' AND pwm_out'stable(7 ms)
+			REPORT "Chybna hodnota pwm vystupu pri val = 3 a ce = 0" SEVERITY error;
+
+		ce_in <= '1' AFTER 50 ns;	 -- Prirazeni se zpozdenim 50 ns
+		WAIT FOR 7 ms;		-- Hold for 7 ms
+		REPORT "Test of CE and LOAD done...";
+
+		-- Zde dopiste kod generujici postupne zmeny (0-7) a (0,7,0,7,...) na vektoru pwm_val_in
+		-- pri kazde SESTUPNE hrane clk_in. A to vse desetkrat po sobe.
+		--! \todo Zde dopiste kod generujici postupne zmeny (0-7,...) a (0,7,0,7,...). Upravte si pocet hodinovych impulzu v procesu clock_proc.
+		FOR j IN 0 TO 10 LOOP
+        	
+            WAIT ON clk_in UNTIL clk_in = '1';
+			
+            FOR i IN 0 TO 7 LOOP
+					WAIT ON clk_in UNTIL clk_in = '0';
+					pwm_val_in <= std_logic_vector(to_unsigned(i, 3));
+                    --WAIT FOR 1 ns;
+                    ASSERT pwm_out /= 'U'
+                    	REPORT "Chyba - vznikaji glitche! (0,1,2,3,4,5,6,7)" SEVERITY error;
+            END LOOP;
+            WAIT ON clk_in UNTIL clk_in = '0';
+            pwm_val_in <= O"0";
+            ASSERT pwm_out /= 'U'
+            	REPORT "Chyba! vznikaji glitche pro pwm_val = 0" SEVERITY error;
+            
+            pwm_val_in <= O"7";
+            ASSERT pwm_out /= 'U'
+            	REPORT "Chyba! vznikaji glitche pro pwm_val = 7" SEVERITY error;
+        END LOOP;
+		REPORT "All tests done." SEVERITY note;
+		WAIT;
+		finish;			-- Procedura z baliku env zajistujici ukonceni simulace
+
+	END PROCESS testbench_proc;
+END ARCHITECTURE Behavioral;

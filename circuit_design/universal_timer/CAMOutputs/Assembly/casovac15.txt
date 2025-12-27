@@ -1,0 +1,16 @@
+Partlist exported from C:/Users/tomse/OneDrive/Dokumenty/eagle/projects/New_Project_2/casovac15.sch at 12.11.2024 21:18
+
+Qty Value        Device       Package     Parts                       Description                          MANUFACTURER MPN PART_STATUS POPULARITY SPICEPREFIX
+7                2,54/0,8     2,54/0,8    O, P, POT1, POT2, S, U+, U- THROUGH-HOLE PAD                                                  5                     
+3   100n         C-EUC1206    C1206       C1, C2, C3                  CAPACITOR, European symbol                                        54         C          
+2   10k          R-EU_M1206   M1206       R1, R2                      RESISTOR, European symbol                                         17         R          
+1   1N4007       DIODE-SOD123 SOD123      D1                          DIODE                                                             22                    
+3   1k5          R-EU_M1206   M1206       R4, R5, R6                  RESISTOR, European symbol                                         17         R          
+1   2200 uF/6,3V CPOL-EUG     PANASONIC_G C4                          POLARIZED CAPACITOR, European symbol                              2          C          
+1   330R         R-EU_M1206   M1206       R3                          RESISTOR, European symbol                                         17         R          
+1   BC846B       BC846BLT1SMD SOT23       T1                          NPN Transistor                                                    0                     
+2   DTSM-6       DTSM-6       DTSM-6      S1, S2                                                                                                              
+1   LEG-1A-5     G5L          G5LE        K2                          RELAY                                                             10                    
+1   LM555D       LM555D       SO08        IO2                         TIMER                                                             0                     
+1   MC78M05CDTG  MC78M05CDTG  DPACK_3     IO1                         500 mA Positive Voltage Regulators                                0                     
+1   zelená       LEDSML1206   SML1206     LED1                        LED                                                               6                     

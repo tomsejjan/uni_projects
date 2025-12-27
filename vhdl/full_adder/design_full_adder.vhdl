@@ -1,0 +1,31 @@
+--! \file design_full_adder.vhdl
+--! \brief Definice entity Full_adder a jeji architektury popsane strukturalnim popisem
+
+--! Zavedena standardni knihovna \c IEEE
+LIBRARY ieee;
+--! Zpristupnen balik \c std_logic_1164 z knihovny \c IEEE pro podporu 9-ti stavove logiky
+USE ieee.std_logic_1164.ALL;
+--! Zpristupnen balik \c numeric_std z knihovny \c IEEE pro podporu konverze cisel dle IEEE 1076.3
+USE ieee.numeric_std.ALL;
+
+--! \brief Definice entity Full_adder
+ENTITY Full_adder IS
+	PORT(
+		a:    in std_logic;			--! Deklarace vstupu: \a a
+		b:    in std_logic;			--! Deklarace vstupu: \a b
+		cin:  in std_logic;			--! Deklarace vstupu carry_in: \a cin
+		sum:  out std_logic;			--! Deklarace vystupu souctu: \a sum
+		cout: out std_logic				--! Deklarace vystupu carry_out: \a cout
+		);
+END ENTITY Full_adder;
+
+--! \brief Definice architektury entity Full_adder
+--! \details Zde budou realizovany pozadovane kombinacni funkce pro vystupy \a sum a \a cout.
+ARCHITECTURE Behavioral OF Full_adder IS
+	SIGNAL s_i: std_logic_vector(1 DOWNTO 0) := "00";	--! Vnitrni signal pro ulozeni vysledku
+BEGIN
+		s_i <= std_logic_vector(unsigned'('0' & a) + unsigned'('0' & b) + unsigned'('0' & cin));
+        cout<= s_i(1);
+    	sum <= s_i(0);
+    	
+END ARCHITECTURE Behavioral;

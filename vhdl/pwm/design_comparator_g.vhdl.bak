@@ -1,0 +1,40 @@
+--! \file design_comparator_g.vhdl
+--! \brief Definice entity Comparator_g a jeji RTL architektury simulujici realny vliv dopravniho zpozdeni na casove prubehy vystupu
+--! \warning Tento soubor je kompletni. Nemodifikujte ho.
+-- $Id: design_comparator_g.vhdl 2885 2024-11-23 10:58:09Z petyovsky $
+
+-- BPC-LOS Laboratorni uloha c.7
+-- Tento soubor je kompletni. Nemodifikujte ho.
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+--! \brief Genericka entita komparatoru s vysledkem porovnani vektoru \a a < \a b
+ENTITY Comparator_g IS
+	GENERIC(
+		BITS: positive			--! Genericky parametr definujici sirku porovnavanych vstupnich vektoru \a a, \a b
+		);
+	PORT(
+		a  : IN  std_logic_vector(BITS-1 DOWNTO 0);	--! Port pro vstupni vektor \a a[BITS-1:0]
+		b  : IN  std_logic_vector(BITS-1 DOWNTO 0);	--! Port pro vstupni vektor \a b[BITS-1:0]
+		cmp: OUT std_logic							--! Port pro vysledek porovnani vektoru \a a < \a b
+		);
+END ENTITY Comparator_g;
+
+--! \brief RTL architektura genericke entity komparatoru s vysledkem porovnani vektoru \a a < \a b
+--! \details RTL architektura genericke entity komparatoru s vysledkem porovnani vektoru \a a < \a b, simulujici realny vliv dopravniho zpozdeni na casove prubehy vystupu \p cmp.
+ARCHITECTURE RTL OF Comparator_g IS
+	SIGNAL cmp_i: std_logic_vector(BITS DOWNTO 0) := (OTHERS => '0');	--! Vnitrni vektor pro ulozeni dilcich termu pri vypoctu komparace
+    SIGNAL xnor_i: std_logic_vector(BITS-1 DOWNTO 0) := (OTHERS => '0');
+	CONSTANT cmp_delay_c: delay_length := 10 ns;	--! Hodnota definujici pro simulaci casove zpozdeni pri vypoctu komparace
+BEGIN
+	cmp_i(0) <= '0';	-- '0' znamena operaci: (a < b), '1' znamena operaci (a <= b).
+	comp: FOR i IN 0 TO BITS-1 GENERATE
+        xnor_i(i) <= TRANSPORT (a(i) XNOR b(i)) AFTER 2 * cmp_delay_c;
+		cmp_i(i + 1) <= TRANSPORT ( xnor_i(i) AND cmp_i(i) ) OR ( NOT a(i) AND b(i) ) -- první část je porovnáním aktuálních bitů. Jsou-li stejné, uděláme AND s předchozím kritériem a jdeme do druhé části.
+       -- Pokud je a(i) = 0, je a < b, a výsledkem porovnání je 1.
+		                AFTER cmp_delay_c;	-- NEMAZAT: zamerne zpozdeni simulujici casove zpozdeni na pri vypoctu komparace
+	END GENERATE comp;
+
+	cmp <= cmp_i(BITS);
+END ARCHITECTURE RTL;

@@ -1,0 +1,42 @@
+--! \file design_counter_synch_ce_g.vhdl
+--! \brief Definice genericke entity synchronniho binarniho citace s vystupem \a q[BITS-1:0] s omezeni citani do hodnoty \a MAX a jeho behavioralni architektury
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+
+--! \brief Entita synchronniho binarniho citace s vystupem \a q[BITS-1:0] s omezeni citani do hodnoty \a MAX
+ENTITY Counter_synch_ce_g IS
+	GENERIC(
+		BITS: positive;			--! Genericky parametr definujici sirku vystupniho vektoru \a q[BITS-1:0]
+		MAX : positive			--! Genericky parametr urcujici maximalni vnitrni hodnotu citace, po ktere dojde k jeho opetovnemu vynulovani
+		);
+	PORT(
+		clk: IN std_logic;							--! Port pro vstup hodinoveho signalu \a clk
+		ce : IN std_logic;							--! Port pro vstup signalu povolujiciho citani \a ce
+		q  : OUT std_logic_vector(BITS-1 downto 0)					--! Port pro vystup hodnoty citace \a q[BITS-1:0]
+		);
+END ENTITY Counter_synch_ce_g;
+
+--! \brief Behavioralni architektura entity synchronniho binarniho citace s vystupem \a q[BITS-1:0] s omezeni citani do hodnoty \a MAX
+ARCHITECTURE Behavioral OF Counter_synch_ce_g IS
+	SIGNAL cnt_i: natural RANGE 0 TO MAX := 0;		--! Vnitrni hodnota binarniho citace
+BEGIN
+	--! Process zajistujici inkrementaci hodnoty citace. Pri `ce = 0` ponechame stejnou hodnotu \p cnt_i. Pokud je `ce = 1` a plati, ze aktualni 
+	--! stav citace je mensi nez MAX provedeme inkrementaci, jestlize jsme jiz dosahli maximalni hodnoty \p MAX bude nova hodnota na vystupu opet rovna 0.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu vypoctu nove hodnoty citace.
+	cnt_proc: PROCESS(clk)
+	BEGIN
+    	IF rising_edge(clk) THEN
+        	IF ce = '1' THEN
+            	IF cnt_i < MAX THEN
+                	cnt_i <= cnt_i + 1;
+                ELSE
+                	cnt_i <= 0;
+                END IF;
+            END IF;
+        END IF;
+	END PROCESS cnt_proc;
+
+	q <= std_logic_vector(to_unsigned(cnt_i, BITS));
+END ARCHITECTURE Behavioral;

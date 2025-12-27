@@ -1,0 +1,77 @@
+--! \file design_counter_bcd_rst_load_ce_g.vhdl
+--! \brief Definice genericke entity Counter_bcd_rst_load_ce_g a jeji behavioralni architektury
+--! \todo Vyplnte informace o autorovi v hlavicce souboru !!!
+--! $Id: design_counter_bcd_rst_load_ce_g.vhdl 2869 2024-11-15 15:54:22Z petyovsky $
+
+-- BPC-LOS Laboratorni uloha c.6 - ukol c. 4
+-- Prijmeni a jmeno autora: (Tomšej Jan)
+-- VUT Login autora: (256421)
+-- ID autora: (256421)
+-- Termin cviceni: (streda)
+-- Datum realizace: (27.11.2024)
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+
+--! \brief Genericka entita synchronniho citace v BCD kodu
+--! \todo Doplnte chybejici casti definice portu entity Counter_bcd_rst_load_ce_g
+ENTITY Counter_bcd_rst_load_ce_g IS
+	GENERIC(
+		MAX : positive := 9						--! Genericky parametr urcujici maximalni vnitrni hodnotu BCD citace, po ktere dojde k jeho opetovnemu vynulovani
+		);
+	PORT(
+		clk : in std_logic;						--! Port pro vstup hodinoveho signalu \a clk
+		rst : in std_logic;						--! Port pro vstup signalu synchronni reset \a rst
+		load: in std_logic;						--! Port pro vstup signalu synchronni load \a load
+		ce  : in std_logic;						--! Port pro vstup signalu povolujiciho citani \a ce
+		d   : in std_logic_vector(3 downto 0);					--! Port pro vstup vektoru dat \a d[3:0] pro synchronni load
+		q   : out std_logic_vector(3 downto 0)					--! Port pro vystup hodnoty BCD citace \a q[3:0]
+		);
+END ENTITY Counter_bcd_rst_load_ce_g;
+
+--! \brief Behavioralni architektura entity synchronniho BCD citace
+ARCHITECTURE Behavioral OF Counter_bcd_rst_load_ce_g IS
+	SIGNAL d_i, q_i: unsigned(3 DOWNTO 0) := X"0";	--! Vnitrni hodnoty BCD citace
+BEGIN
+	--! Process zajistujici vypocet nove hodnoty do signalu \p d_i. Priority jednotlivych signalu: \p rst > \p load > \p ce.
+	--! 1. Pri `rst = 1` resetujeme budouci hodnotu citace. 
+	--! 2. Pri `load = 1` synchronne s clk nahrajeme z \p d[3:0] novou budouci hodnotu citace.
+	--! 3. Pri `ce = 0` nastavime stejnou hodnotu jako je na \p q_i. Pokud je `ce = 1` a plati, ze aktualni stav BCD citace
+	--!    je mensi nez MAX, provedeme inkrementaci. Jestlize jsme jiz dosahli maximalni hodnoty \p MAX bude nova hodnota na vystupu \p d_i rovna 0.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu vypoctu nove hodnoty do signalu \p d_i.
+	next_val_proc: PROCESS(q_i, rst, load, ce)				-- Kombinacni logika - prechodova funkce
+	BEGIN
+		--! \todo Doplnte telo procesu: `next_val_proc`. (Pripadne zapiste definici BCD citace pomoci jedineho procesu.)
+		--IF rising_edge(clk) THEN
+			IF rst = '1' THEN
+				d_i <= X"0";
+			ELSIF load = '1' THEN
+				d_i <= unsigned(d);
+			ELSIF ce = '1' THEN
+				IF q_i < MAX THEN
+					d_i <= q_i + 1;
+				ELSE
+					d_i <= X"0";
+				END IF;
+            ELSE
+            	d_i <= q_i;
+			END IF;
+		--END IF;
+	END PROCESS next_val_proc;
+
+	--! Process zajistujici registrovou cast BCD citace pro vystup \p q_i.
+	--! \vhdlflow Tento diagram zobrazuje jednotlive kroky procesu registrace nove hodnoty BCD citace.
+	register_proc: PROCESS(clk)				-- Registrova cast z klopnych obvodu typu D
+	BEGIN
+		--! \todo Doplnte telo procesu: `register_proc`. (Pripadne zapiste definici BCD citace pomoci jedineho procesu.)
+        IF rising_edge(clk) THEN
+            	q_i <= d_i;
+        END IF;
+        
+	END PROCESS register_proc;
+
+	--! \todo Nahradte 'U'.
+	q <= std_logic_vector(q_i);			-- Pretypovani z unsigned na std_logic_vector
+
+END ARCHITECTURE Behavioral;

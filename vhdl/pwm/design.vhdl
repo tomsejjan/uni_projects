@@ -1,0 +1,70 @@
+--! \file design.vhdl
+--! \brief Definice top-level entity Generator_pwm a jeji sktrukturalni architektury
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+
+--! \brief Top-level entita Generator_pwm
+ENTITY Generator_pwm IS
+	PORT(
+		clk    : in std_logic;							--! Port pro vstup hodinoveho signalu \a clk
+		ce     : in std_logic;							--! Port pro vstup signalu povolujiciho hodinovy signal \a ce
+		pwm_val: in std_logic_vector(2 downto 0);		--! Port pro vstup signalu s pwm hodnotou \a pwm_val[2:0]
+		pwm_out: out std_logic							--! Port pro vystup signalu \a pwm_out
+		);
+END ENTITY Generator_pwm;
+
+--! \brief Strukturalni popis architektury top-level entity Generator_pwm
+ARCHITECTURE Structural OF Generator_pwm IS
+	SIGNAL q_i: std_logic_vector(pwm_val'range) := (OTHERS => '0');			--! Vnitrni signal s hodnotou citace
+	SIGNAL pwm_val_i: std_logic_vector(pwm_val'range) := (OTHERS => '0');	--! Vnitrni signal s pwm hodnotou platnou pro tento pwm cyklus
+	SIGNAL load_i: std_logic := '0';										--! Vnitrni signal definujici okamzik pro nacteni nove pwm hodnoty
+	SIGNAL cmp_i: std_logic := '0';											--! Vnitrni signal s vysledkem komparace (tato hodnota ovsem obsahuje hazardy, bude nutno vyuzit pipelining)
+	CONSTANT pwm_max_c: positive := 6;										--! Maximalni hodnota PWM citace
+BEGIN
+	pwm_counter1: ENTITY work.Counter_synch_ce_g
+		GENERIC MAP(
+			BITS => 3,			-- Pocet bitu specifikujte pomoci vyrazu vyuzivajici vhodny atribut
+			MAX  => pwm_max_c
+			)
+		PORT MAP(
+			clk => clk,
+			ce  => ce,
+			q   => q_i
+			);
+
+	load_i <= '1' WHEN q_i = std_logic_vector(to_unsigned(pwm_max_c, q_i'length)) ELSE
+	          '0';
+
+	pwm_value_register1: ENTITY work.Register_synch_load_ce_g
+		GENERIC MAP(
+			BITS => 3			-- Pocet bitu specifikujte pomoci vyrazu vyuzivajici vhodny atribut
+			)
+		PORT MAP(
+			clk  => clk,
+			ce   => ce,
+			load => load_i,
+			d    => pwm_val,
+			q    => pwm_val_i
+			);
+
+	pwm_comparator1: ENTITY work.Comparator_g
+		GENERIC MAP(
+			BITS => 3			-- Pocet bitu specifikujte pomoci vyrazu vyuzivajici vhodny atribut
+			)
+		PORT MAP(
+			a   => q_i,
+			b   => pwm_val_i,
+			cmp => cmp_i
+			);
+
+	pwm_out_pipeline1: ENTITY work.Pipeline_synch_ce
+		PORT MAP(
+			clk => clk,
+			ce  => ce,
+			d   => cmp_i,
+			q   => pwm_out
+			);
+
+END ARCHITECTURE Structural;

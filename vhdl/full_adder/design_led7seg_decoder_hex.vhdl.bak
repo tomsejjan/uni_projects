@@ -1,0 +1,57 @@
+--! \file design_led7seg_decoder_hex.vhdl
+--! \brief Definice entity Led7seg_decoder_hex a jeji architektury z lab ulohy c.3 - ukol c. 5
+--! \todo Vyplnit informace o autorovi v hlavicce souboru !!!
+--! $Id: design_led7seg_decoder_hex.vhdl 2827 2024-10-17 15:45:43Z petyovsky $
+
+-- BPC-LOS Laboratorni uloha c.3 - ukol c. 5
+-- Prijmeni a jmeno autora: (Tomšej Jan)
+-- VUT Login autora: (256421)
+-- ID autora: (256421)
+-- Termin cviceni: (streda15)
+-- Datum realizace: (23.10.2024)
+
+--! Zavedena standardni knihovna \c IEEE
+LIBRARY ieee;
+--! Zpristupnen balik \c std_logic_1164 z knihovny \c IEEE pro podporu 9-ti stavove logiky
+USE ieee.std_logic_1164.ALL;
+--! Zpristupnen balik \c pkg_led7seg_def z pracovni knihovny \c work
+--! \details Balik obsahuje definici subtypu a konstant pro 7-segmentovy displej.
+USE work.pkg_led7seg_def.ALL;
+
+--! \brief Definice entity Led7seg_decoder_hex
+--! \todo Doplnte chybejici casti definice portu entity Led7seg_decoder_hex
+ENTITY Led7seg_decoder_hex IS
+	PORT(
+		x:   in std_logic_vector(3 downto 0);	--! Deklarace datovych vstupu: \a x[3:0]
+		an:  out std_logic_vector(3 downto 0);	--! Deklarace vystupu na display: \a an[3:0]
+		seg: out std_logic_vector(6 downto 0)	--! Deklarace vystupu na display: \a seg[6:0]
+		);
+END Led7seg_decoder_hex;
+
+--! \brief Definice architektury entity Led7seg_decoder_hex
+--! \details Zde budou realizovany pozadovane kombinacni funkce, pomoci prikazu: `WITH`-`SELECT`-`WHEN` a pripravenych konstant.
+ARCHITECTURE Behavioral OF Led7seg_decoder_hex IS
+	
+BEGIN
+	WITH x SELECT
+		seg <= segments_0_c    WHEN "0000",		-- symbol 0
+			segments_1_c    WHEN "0001",
+            segments_2_c    WHEN "0010",
+            segments_3_c    WHEN "0011",
+            segments_4_c  	When "0100",
+            segments_5_c    WHEN "0101",
+            segments_6_c    WHEN "0110",
+            segments_7_c    WHEN "0111",
+            segments_8_c    WHEN "1000",
+            segments_9_c    WHEN "1001",
+            segments_a_c	WHEN "1010",
+            segments_b_c	WHEN "1011",
+            segments_c_c	WHEN "1100",
+            segments_d_c	WHEN "1101",
+            segments_e_c	WHEN "1110",
+            segments_f_c	WHEN "1111",
+		    segments_none_c WHEN OTHERS;		-- nic nebude svitit
+	an <= anodes_1_c;
+END Behavioral;
+
+

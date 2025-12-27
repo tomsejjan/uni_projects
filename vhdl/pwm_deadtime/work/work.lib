@@ -1,0 +1,96 @@
+timestamp=1766702255212
+
+[~A]
+ModifyID=1
+Version=74
+
+[~MFT]
+0=49|0work.mgf|15611|0
+1=7|1work.mgf|9159|0
+3=7|3work.mgf|3926|0
+
+[comparator_g]
+A/rtl=A/RTL 21|../design_comparator_g.vhdl|26|1*2809
+BinL64/rtl=3*1810
+I=0*4240
+I/rtl=I/RTL 0*4955
+M=11|1|vf3|1766702255182|../design_comparator_g.vhdl|0*3826*0x2cd630d48bf5adf4c87e4b6871542a73e5652bd2|0*4147*0xd986fd7175c8cf28cd774bcadde79966
+M/rtl=M/RTL 21|1|vf3|1766702255184|../design_comparator_g.vhdl|0*4444*0xe0197efebc014df9bea01d4483a3b5c715e9d560|0*4855*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design_comparator_g.vhdl|13
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|c9b612b7ae0248c313b2c4f8750684bacd61acf259fe1c0b6e30cdfb2b2b04d70449cb7e2ee74beac5518d5d51c0fa66
+Version/rtl=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|9dbb47eebe7da777b751efca131652c51851b219ad96b68da4fcf2bc31217c1b
+
+[counter_synch_ce_g]
+A/behavioral=A/Behavioral 21|../design_counter_synch_ce_g.vhdl|31|1*0
+BinL64/behavioral=3*0
+I=0*714
+I/behavioral=I/Behavioral 0*1507
+M=11|1|vf3|1766702255167|../design_counter_synch_ce_g.vhdl|0*239*0x7ca8f6a233d7f2c249b9f9fd6221f63e21a2932a|0*609*0xd986fd7175c8cf28cd774bcadde79966
+M/behavioral=M/Behavioral 21|1|vf3|1766702255169|../design_counter_synch_ce_g.vhdl|0*963*0x328cdffc6f15bde84c7f40c46e6e78a36f244565|0*1388*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design_counter_synch_ce_g.vhdl|18
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|5cd07e382dcbd6a9c5593586c419285ab291eabc845290d20a5294ceca11199071399d912ee2f52e381d5d403b3a8c9d
+Version/behavioral=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|35f8e56ee514308d50318f7abb190927faf8176ad6902a7357df79bb1a85bff4d939e9dd402a82efda995d5001ef157a
+
+[generator_deadtime_synch_ce]
+A/structural=A/Structural 21|../design_generator_deadtime_synch_ce.vhdl|32|1*5515
+BinL64/structural=3*3166
+I=0*7393
+I/structural=I/Structural 0*8526
+M=11|1|vf3|1766702255194|../design_generator_deadtime_synch_ce.vhdl|0*6876*0x2222d5db2f36de2b0bfe1c034592fd6a509b9822|0*7270*0xd986fd7175c8cf28cd774bcadde79966
+M/structural=M/Structural 21|1|vf3|1766702255196|../design_generator_deadtime_synch_ce.vhdl|0*7651*0x20e6d071f8c0fdf95ed1129b9056266917aad9cf|0*8389*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design_generator_deadtime_synch_ce.vhdl|18
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|69f1c8d691b00ec672b62369a8ae89afef9b5f22471c09b72ef4bb7f3b81b1c300163dfaf6386f6cff5252a920ad6de365f16039e7976cb1158556590319c98b
+Version/structural=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|763af2576fce11abd6060bb6269849fa7b35399d4d6b9112dfc7987dc24af3ebe842e070c6ba36af45ebbb44711a6ccf
+
+[generator_pwm_deadtime]
+A/structural=A/Structural 21|../design.vhd|33|1*7012
+BinL64/structural=3*3495
+I=0*9542
+I/structural=I/Structural 0*10919
+M=11|1|vf3|1766702255200|../design.vhd|0*9085*0x2a6b5e6281302f70bac9269be153e597134746a1|0*9453*0xd986fd7175c8cf28cd774bcadde79966
+M/structural=M/Structural 21|1|vf3|1766702255202|../design.vhd|0*9795*0xd8f815cac208f0958f79734ddf1fbc21bbc2b5ff|0*10816*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design.vhd|18
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|a2b9a220bee9f3cf5578343636240e8d131ea72862b31572273f99dbeb021a08a48d5a6ff63a75260307dca0e79e568b
+Version/structural=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|763af2576fce11abd6060bb6269849fa7b35399d4d6b9112dfc7987dc24af3eb9d8a1ba8951bba5d1acae45c1c364fdb
+
+[pipeline_synch_ce]
+A/behavioral=A/Behavioral 21|../design_pipeline_synch_ce.vhdl|27|1*4553
+BinL64/behavioral=3*2648
+I=0*5761
+I/behavioral=I/Behavioral 0*6419
+M=11|1|vf3|1766702255188|../design_pipeline_synch_ce.vhdl|0*5366*0xafe3d5fb6dcd2c5c1462cdbc880b47a0a4346ccf|0*5658*0xd986fd7175c8cf28cd774bcadde79966
+M/behavioral=M/Behavioral 21|1|vf3|1766702255190|../design_pipeline_synch_ce.vhdl|0*5970*0xdbef96690516202ddadd48886163bed27ccce1d7|0*6302*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design_pipeline_synch_ce.vhdl|17
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|a41b3f43f298c7477a586ef6e9b640b4e61d2d8b012773511723f8dd601090ec80ceec0645b285b12a6c0e3037c90a82
+Version/behavioral=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|35f8e56ee514308d50318f7abb190927faf8176ad6902a7357df79bb1a85bff49fdbee06eedfa7f1be7e3d08a7fd662e
+
+[register_synch_load_ce_g]
+A/behavioral=A/Behavioral 21|../design_register_synch_load_ce_g.vhdl|32|1*1368
+BinL64/behavioral=3*957
+I=0*2573
+I/behavioral=I/Behavioral 0*3338
+M=11|1|vf3|1766702255176|../design_register_synch_load_ce_g.vhdl|0*2019*0x1c96b4d8fe638b922eec8744a74919f4e5240fe2|0*2456*0xd986fd7175c8cf28cd774bcadde79966
+M/behavioral=M/Behavioral 21|1|vf3|1766702255178|../design_register_synch_load_ce_g.vhdl|0*2828*0xd345e665aa007a306c981fc3ddb60293a35e700f|0*3207*0xb966535deb9617f745ced53ae4cc1a7f
+R=../design_register_synch_load_ce_g.vhdl|18
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|e73c466b6ca90b7587581d4193111fde193349f3442ab236248f1d78cfe58f84840ea9c98447629c4da86c1be4dc1435d1c95c2530e19928be5c9e72896fdbff
+Version/behavioral=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|35f8e56ee514308d50318f7abb190927faf8176ad6902a7357df79bb1a85bff42272fc17fe1084243c6a239f58ecd8b6
+
+[testbench]
+A/behavioral=A/Behavioral 21|../testbench.vhd|25|1*9159
+BinL64/behavioral=3*3926
+I=0*11756
+I/behavioral=I/Behavioral 0*15611
+M=11|1|vf3|1766702255206|../testbench.vhd|0*11461*0x97612f65b03479eaa9991679de851c7b58b6a3b7|0*11677*0xd986fd7175c8cf28cd774bcadde79966
+M/behavioral=M/Behavioral 21|1|vf3|1766702255208|../testbench.vhd|0*12027*0x890ad4def64b41b02030132c04257b4523f31d07|0*15518*0xb966535deb9617f745ced53ae4cc1a7f
+R=../testbench.vhd|21
+Version=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|9c08cd30fe0f9550ac0d051aa32c9ba5030c5f4de3ffa3c97f58c5528f1d79134e7f9730ba2cb1e90b6fbafb7709f0e7
+Version/behavioral=2023.04.112 (Linux64)|00000006789c53d0353230b40400039a011a|35f8e56ee514308d50318f7abb190927faf8176ad6902a7357df79bb1a85bff40ff8e67ad553b10ec28dd44da1bdca72
+
+[~U]
+comparator_g=Comparator_g 11|0*3604|
+counter_synch_ce_g=Counter_synch_ce_g 11|0*0|
+generator_deadtime_synch_ce=Generator_deadtime_synch_ce 11|0*6639|
+generator_pwm_deadtime=Generator_pwm_deadtime 11|0*8838|
+pipeline_synch_ce=Pipeline_synch_ce 11|0*5163|
+register_synch_load_ce_g=Register_synch_load_ce_g 11|0*1767|
+testbench=Testbench 11|0*11337|
