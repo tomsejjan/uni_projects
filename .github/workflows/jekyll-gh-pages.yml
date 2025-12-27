@@ -2,9 +2,8 @@ name: Generate and Deploy Documentation
 
 on:
   push:
-    branches: ["main"]  # Spustí se vždy, když nahrajete změnu do main
+    branches: ["main"]
 
-# Důležité: Povolení pro robota, aby mohl zapisovat na Pages
 permissions:
   contents: read
   pages: write
@@ -18,27 +17,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Stáhne váš kód
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Nainstaluje Doxygen a Graphviz (pro diagramy)
-      - name: Install Doxygen
+      - name: Install Doxygen and Graphviz
         run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
 
-      # 3. Spustí Doxygen (tady vznikne ta složka html!)
       - name: Run Doxygen
         run: doxygen Doxyfile
 
-      # 4. Vezme složku "html" a připraví ji pro web
-      # POZOR: Ujistěte se, že v Doxyfile máte nastaveno OUTPUT_DIRECTORY na prázdné nebo ./
-      # Doxygen standardně generuje do složky "html", takže cesta 'html' níže je správně.
+      # --- TOTO JE TA OPRAVA PROTI CHYBĚ 404 ---
+      # Vytvoří prázdný soubor .nojekyll uvnitř složky html.
+      # To řekne GitHubu: "Neignoruj složky začínající podtržítkem!"
+      - name: Fix for GitHub Pages (Disable Jekyll)
+        run: touch html/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'html'
 
-      # 5. Zveřejní to na internet
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
