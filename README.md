@@ -1,8 +1,8 @@
 # An attachment to my CV
 ## Description:
 ```text
-├───beckhoff_plc                            # Automation
-├───c++                                     # C++ programming
+├───beckhoff_plc                           
+├───c++                                     
 ├───circuit_design
 │   └───universal_timer
 ├───control_theory_regulation
