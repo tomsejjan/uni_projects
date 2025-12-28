@@ -1,5 +1,6 @@
 # An attachment to my CV
 ## Structure:
+```text
 C:.
 ├───.github
 │   └───workflows
