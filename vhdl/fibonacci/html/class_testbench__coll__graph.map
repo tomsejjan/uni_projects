@@ -1,0 +1,5 @@
+<map id="Testbench" name="Testbench">
+<area shape="rect" id="Node000001" title="Testbench pro entitu: Lfsr8_fibonacci." alt="" coords="19,80,101,107"/>
+<area shape="rect" id="Node000002" href="$class_lfsr8__fibonacci.html" title="Entita posuvneho registru s linearni zpetnou vazbou &#45; LFSR." alt="" coords="5,5,115,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,46,63,80,57,79,58,50"/>
+</map>

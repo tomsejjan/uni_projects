@@ -1,0 +1,7 @@
+<map id="Lfsr8_fibonacci" name="Lfsr8_fibonacci">
+<area shape="rect" id="Node000001" title="Entita posuvneho registru s linearni zpetnou vazbou &#45; LFSR." alt="" coords="65,5,175,32"/>
+<area shape="rect" id="Node000002" href="$class_led__lfsr8__10hz.html" title=" " alt="" coords="5,80,115,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,43,72,82,68,78,97,45"/>
+<area shape="rect" id="Node000003" href="$class_testbench.html" title="Testbench pro entitu: Lfsr8_fibonacci." alt="" coords="139,80,221,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="141,42,172,80,167,79,139,46"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="Testbench" name="Testbench">
+<area shape="rect" id="Node000001" title="Testbench pro entitu: Led7seg_counter_synch_bcd." alt="" coords="236,155,318,181"/>
+<area shape="rect" id="Node000002" href="$class_led7seg__counter__synch__bcd.html" title="Top&#45;level entita Led7seg_counter_synch_bcd." alt="" coords="182,80,372,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,121,279,156,275,153,275,124"/>
+<area shape="rect" id="Node000003" href="$class_clock__divider__synch__g.html" title="Genericka entita delicka frekvence (pro pouziti v synchronnich sekvencnich obvodech)." alt="" coords="5,5,162,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="132,35,245,78,241,81,131,40"/>
+<area shape="rect" id="Node000004" href="$class_counter__bcd__rst__load__ce__g.html" title="Genericka entita synchronniho citace v BCD kodu." alt="" coords="185,5,368,32"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="278,46,279,81,275,78,275,50"/>
+<area shape="rect" id="Node000005" href="$class_led7seg__decoder__bcd.html" title="Entita dekoderu hodnoty v BCD kodu na 7&#45;segmentovy displej." alt="" coords="393,5,544,32"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="424,37,311,82,310,77,419,39"/>
+</map>

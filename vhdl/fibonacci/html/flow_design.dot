@@ -1,0 +1,60 @@
+ digraph G { 
+rankdir=TB 
+concentrate=true
+stylesheet="doxygen.css"
+node28[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> testbench_proc:process( ) </TD></TR></TABLE>>];node0[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightyellow" >  variable val_v: natural := 16#FF# </TD></TR></TABLE>>];node2[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test start.&quot; severity    note<BR ALIGN="LEFT"/> wait  for   5 ms<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;        . </TD></TR></TABLE>>];node5 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for i in  1 TO  260 loop"]
+node6[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > assert    led_out=   std_logic_vector( to_unsigned(   val_v, 8) ) report    &quot;Chyba v LFSR na kroku: #&quot;&amp;   to_string( i )&amp;   &quot;, led: &quot;&amp;   to_string( led_out )&amp;   &quot;, val_v: &quot;&amp;   to_string( std_logic_vector( to_unsigned(   val_v, 8) ) ) report    failure<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;<BR ALIGN="LEFT"/>val_v:= 2*   val_v<BR ALIGN="LEFT"/>val_v:=   val_v+(   val_v/ 2** 8+   val_v/ 2** 6+   val_v/ 2** 5+   val_v/ 2** 4)MOD 2<BR ALIGN="LEFT"/>val_v:=   val_vMOD 256                                                                                                                                                                                                                                                                                                                                                                                                                                                                          . </TD></TR></TABLE>>];node12 [shape=diamond,style=filled,color="0.7 0.3 1.0",label=" if    led_out= X\&quot;FF\&quot; then"]
+node13[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Perioda LFSR nalezena po &quot;&amp;   to_string( i )&amp;   &quot; krocich.&quot; </TD></TR></TABLE>>];node15 [shape=ellipse ,label="end loop"]
+node16[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > arst_in&lt;= &#39;1&#39;<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;<BR ALIGN="LEFT"/>assert    led_out= X&quot;FF&quot; report    &quot;Chyba v LFSR pri: arst = 1 a ce = 1&quot; report    failure<BR ALIGN="LEFT"/>arst_in&lt;= &#39;0&#39;<BR ALIGN="LEFT"/>ce_in&lt;= &#39;0&#39;<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;                                                                                                          . </TD></TR></TABLE>>];node22 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for i in  1 TO  2 loop"]
+node23[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;1&#39;<BR ALIGN="LEFT"/>assert    led_out= X&quot;FF&quot; report    &quot;Chyba v LFSR pri: arst = 0 a ce = 0&quot; report    failure </TD></TR></TABLE>>];node25 [shape=ellipse ,label="end loop"]
+node26[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test done.&quot; severity    note </TD></TR></TABLE>>];node29[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> end process  </TD></TR></TABLE>>];edge [color="green",label=""]
+node28->node0
+edge [color="green",label=""]
+node0->node2
+edge [color="green",label=""]
+node2->node5:n
+edge [color="red",label="yes"]
+node5:s->node6
+edge [color="black",label="no"]
+node5:s->node16
+edge [color="green",label=""]
+node6->node12:n
+edge [color="red",label="yes"]
+node12:s->node13
+edge [color="black",label="no"]
+node12:s->node15
+edge [color="green",label=""]
+node13->node15
+edge [color="green",label=""]
+node15->node5:n
+edge [color="green",label=""]
+node16->node22:n
+edge [color="red",label="yes"]
+node22:s->node23
+edge [color="black",label="no"]
+node22:s->node26
+edge [color="green",label=""]
+node23->node25
+edge [color="green",label=""]
+node25->node22:n
+edge [color="green",label=""]
+node26->node29
+ } 

@@ -1,0 +1,47 @@
+ digraph G { 
+rankdir=TB 
+concentrate=true
+stylesheet="doxygen.css"
+node39[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> testbench_proc:process( ) </TD></TR></TABLE>>];node1[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test start.&quot; severity    note<BR ALIGN="LEFT"/> report    &quot;Testing Led7seg_adder3...&quot; severity    note<BR ALIGN="LEFT"/> report    &quot;1 + 1 + 1 =&quot; severity    note<BR ALIGN="LEFT"/>a_in&lt;= O&quot;1&quot;<BR ALIGN="LEFT"/>b_in&lt;= O&quot;1&quot;<BR ALIGN="LEFT"/>c_in&lt;= &#39;1&#39;<BR ALIGN="LEFT"/> wait  for    stimulus_step_c<BR ALIGN="LEFT"/> report    &quot;4 + 2 + 0 =&quot; severity    note<BR ALIGN="LEFT"/>a_in&lt;= O&quot;4&quot;<BR ALIGN="LEFT"/>b_in&lt;= O&quot;2&quot;<BR ALIGN="LEFT"/>c_in&lt;= &#39;0&#39;<BR ALIGN="LEFT"/> wait  for    stimulus_step_c<BR ALIGN="LEFT"/> report    &quot;7 + 7 + 1 =&quot; severity    note<BR ALIGN="LEFT"/>a_in&lt;= O&quot;7&quot;<BR ALIGN="LEFT"/>b_in&lt;= O&quot;7&quot;<BR ALIGN="LEFT"/>c_in&lt;= &#39;1&#39;<BR ALIGN="LEFT"/> wait  for    stimulus_step_c<BR ALIGN="LEFT"/> report    &quot;Testing Adder3...&quot; severity    note                . </TD></TR></TABLE>>];node22 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for a in  0 TO  7 loop"]
+node23 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for b in  0 TO  7 loop"]
+node24 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for c in  0 TO  1 loop"]
+node25[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > a_in&lt;=   std_logic_vector( to_unsigned(   a, 3) )<BR ALIGN="LEFT"/>b_in&lt;=   std_logic_vector( to_unsigned(   b, 3) )<BR ALIGN="LEFT"/>c_in&lt;=   std_logic( to_unsigned(   c, 1)( 0) )<BR ALIGN="LEFT"/> wait  for    stimulus_step_c<BR ALIGN="LEFT"/>assert (   dut_sum_result=   std_logic_vector( to_unsigned(   a+   b+   c, 4) )) report    to_string( a )&amp;   &quot;+&quot;&amp;   to_string( b )&amp;   &quot;+&quot;&amp;   to_string( c )&amp;   &quot; = &quot;&amp;   to_string( to_integer( unsigned( dut_sum_result ) ) ) report    error </TD></TR></TABLE>>];node30 [shape=ellipse ,label="end loop"]
+node31 [shape=ellipse ,label="end loop"]
+node32 [shape=ellipse ,label="end loop"]
+node33[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > a_in&lt;=( others =&gt; &#39;0&#39;)<BR ALIGN="LEFT"/>b_in&lt;=( others =&gt; &#39;0&#39;)<BR ALIGN="LEFT"/>c_in&lt;= &#39;0&#39;<BR ALIGN="LEFT"/> wait  for    stimulus_step_c<BR ALIGN="LEFT"/> report    &quot;Test done.&quot; severity    note<BR ALIGN="LEFT"/> wait                                                                     . </TD></TR></TABLE>>];node40[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> end process  </TD></TR></TABLE>>];edge [color="green",label=""]
+node39->node1
+edge [color="green",label=""]
+node1->node22:n
+edge [color="red",label="yes"]
+node22:s->node23:n
+edge [color="black",label="no"]
+node22:s->node33
+edge [color="red",label="yes"]
+node23:s->node24:n
+edge [color="black",label="no"]
+node23:s->node32
+edge [color="red",label="yes"]
+node24:s->node25
+edge [color="black",label="no"]
+node24:s->node31
+edge [color="green",label=""]
+node25->node30
+edge [color="green",label=""]
+node30->node24:n
+edge [color="green",label=""]
+node31->node23:n
+edge [color="green",label=""]
+node32->node22:n
+edge [color="green",label=""]
+node33->node40
+ } 

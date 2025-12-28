@@ -1,0 +1,47 @@
+ digraph G { 
+rankdir=TB 
+concentrate=true
+stylesheet="doxygen.css"
+node45[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> testbench_proc:process( ) </TD></TR></TABLE>>];node1[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test start.&quot; severity    note<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;<BR ALIGN="LEFT"/> wait  for   12.5 ms<BR ALIGN="LEFT"/>pwm_val_in&lt;=   std_logic_vector( to_unsigned( 1,   pwm_val_in&#39;length) )<BR ALIGN="LEFT"/> wait  for   0.5 ms<BR ALIGN="LEFT"/>assert    dut_cmp_p0= &#39;0&#39;and   dut_cmp_p0&#39;stable(  7 ms) report    &quot;Chybna hodnota cmp_p0_i signalu pri val = 0&quot; report    error<BR ALIGN="LEFT"/> wait  for   13.5 ms<BR ALIGN="LEFT"/>pwm_val_in&lt;=   std_logic_vector( to_unsigned( 6,   pwm_val_in&#39;length) )<BR ALIGN="LEFT"/> wait  for   0.5 ms<BR ALIGN="LEFT"/>assert    dut_cmp_p0= &#39;0&#39;and   dut_cmp_p0&#39;last_event=  5 ms report    &quot;Chybna hodnota cmp_p0_i signalu pri val = 1&quot; report    error<BR ALIGN="LEFT"/> wait  for   13.5 ms<BR ALIGN="LEFT"/>pwm_val_in&lt;=   std_logic_vector( to_unsigned( 7,   pwm_val_in&#39;length) )<BR ALIGN="LEFT"/> wait  for   0.5 ms<BR ALIGN="LEFT"/>assert    dut_cmp_p0= &#39;1&#39;and   dut_cmp_p0&#39;last_event=  6 ms report    &quot;Chybna hodnota cmp_p0_i signalu pri val = 6&quot; report    error<BR ALIGN="LEFT"/> wait  for   13.5 ms<BR ALIGN="LEFT"/>pwm_val_in&lt;=   std_logic_vector( to_unsigned( 3,   pwm_val_in&#39;length) )<BR ALIGN="LEFT"/> wait  for   0.5 ms<BR ALIGN="LEFT"/>assert    dut_cmp_p0= &#39;1&#39;and   dut_cmp_p0&#39;stable(  7 ms) report    &quot;Chybna hodnota cmp_p0_i signalu pri val = 7&quot; report    error<BR ALIGN="LEFT"/> report    &quot;Testujeme CE = 0&quot;<BR ALIGN="LEFT"/>ce_in&lt;= &#39;0&#39; after   50 ns<BR ALIGN="LEFT"/> wait  for   7 ms<BR ALIGN="LEFT"/>assert    dut_cmp_p0= &#39;1&#39;and   dut_cmp_p0&#39;stable(  7 ms) report    &quot;Chybna hodnota cmp_p0_i signalu pri val = 3 a ce = 0&quot; report    error<BR ALIGN="LEFT"/>ce_in&lt;= &#39;1&#39; after   50 ns<BR ALIGN="LEFT"/> wait  for   7 ms<BR ALIGN="LEFT"/> report    &quot;Test of CE and LOAD done...&quot;                                                                                                                                                                                                  . </TD></TR></TABLE>>];node26 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for j in  0 TO  10 loop"]
+node27[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;1&#39; </TD></TR></TABLE>>];node28 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for i in  0 TO  7 loop"]
+node29[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/>pwm_val_in&lt;=   std_logic_vector( to_unsigned(   i, 3) )<BR ALIGN="LEFT"/>assert    drv_top_out/= &#39;U&#39; report    &quot;Chyba - vznikaji glitche! (0,1,2,3,4,5,6,7)&quot; report    error<BR ALIGN="LEFT"/>assert    drv_bottom_out/= &#39;U&#39; report    &quot;Chyba - vznikaji glitche! (0,1,2,3,4,5,6,7)&quot; report    error </TD></TR></TABLE>>];node33 [shape=ellipse ,label="end loop"]
+node34[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/>pwm_val_in&lt;= O&quot;0&quot;<BR ALIGN="LEFT"/>assert    drv_top_out/= &#39;U&#39; report    &quot;Chyba! vznikaji glitche&quot; report    error<BR ALIGN="LEFT"/>assert    drv_bottom_out/= &#39;U&#39; report    &quot;Chyba! vznikaji glitche&quot; report    error<BR ALIGN="LEFT"/>pwm_val_in&lt;= O&quot;7&quot;<BR ALIGN="LEFT"/>assert    drv_top_out/= &#39;U&#39; report    &quot;Chyba! vznikaji glitche&quot; report    error<BR ALIGN="LEFT"/>assert    drv_bottom_out/= &#39;U&#39; report    &quot;Chyba! vznikaji glitche&quot; report    error </TD></TR></TABLE>>];node41 [shape=ellipse ,label="end loop"]
+node42[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;All tests done.&quot; severity    note<BR ALIGN="LEFT"/> wait                                                                               . </TD></TR></TABLE>>];node46[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> end process  </TD></TR></TABLE>>];edge [color="green",label=""]
+node45->node1
+edge [color="green",label=""]
+node1->node26:n
+edge [color="red",label="yes"]
+node26:s->node27
+edge [color="black",label="no"]
+node26:s->node42
+edge [color="green",label=""]
+node27->node28:n
+edge [color="red",label="yes"]
+node28:s->node29
+edge [color="black",label="no"]
+node28:s->node34
+edge [color="green",label=""]
+node29->node33
+edge [color="green",label=""]
+node33->node28:n
+edge [color="green",label=""]
+node34->node41
+edge [color="green",label=""]
+node41->node26:n
+edge [color="green",label=""]
+node42->node46
+ } 

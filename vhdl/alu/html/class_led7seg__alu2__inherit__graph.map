@@ -1,0 +1,9 @@
+<map id="Led7seg_alu2" name="Led7seg_alu2">
+<area shape="rect" id="Node000001" title="Definice top&#45;level entity Led7seg_alu2." alt="" coords="61,155,162,181"/>
+<area shape="rect" id="Node000002" href="$class_alu2.html" title="Definice entity Alu2." alt="" coords="22,80,70,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="69,116,103,154,97,155,66,121"/>
+<area shape="rect" id="Node000003" href="$class_full__adder.html" title="Definice entity Full_adder." alt="" coords="5,5,87,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="47,45,49,80,43,79,45,50"/>
+<area shape="rect" id="Node000004" href="$class_led7seg__decoder__signed.html" title="Definice entity Led7seg_decoder_signed." alt="" coords="94,80,262,107"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="159,117,124,156,121,152,154,119"/>
+</map>

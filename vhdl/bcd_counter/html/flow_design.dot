@@ -1,0 +1,134 @@
+ digraph G { 
+rankdir=TB 
+concentrate=true
+stylesheet="doxygen.css"
+node56[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> testbench_proc:process( ) </TD></TR></TABLE>>];node0[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightyellow" >  variable symbol_on_segments_v: std_logic_vector( 7 DOWNTO  0) := X&quot;00&quot; </TD></TR></TABLE>>];node2[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test start.&quot; severity    note<BR ALIGN="LEFT"/> wait  for   5 ms<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;1&#39;        . </TD></TR></TABLE>>];node5 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for i in  1 TO  7 loop"]
+node6[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > symbol_on_segments_v:=   seg_out </TD></TR></TABLE>>];node8 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for j in  1 TO  10 loop"]
+node9[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;0&#39; </TD></TR></TABLE>>];node10 [shape=ellipse ,label="end loop"]
+node11 [shape=ellipse ,label="end loop"]
+node12[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Resetujeme...&quot;<BR ALIGN="LEFT"/>rst_in&lt;= &#39;1&#39;                            . </TD></TR></TABLE>>];node14 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for j in  1 TO  11 loop"]
+node15[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/>assert_moment&lt;=not    assert_moment, &#39;0&#39; after   10 ns<BR ALIGN="LEFT"/>assert    dut_val_bcd_i= X&quot;0&quot; report    &quot;Nefunguje synch reset BCD citace&quot; report    error<BR ALIGN="LEFT"/>assert    seg_out( 6 DOWNTO  0)=   led7seg_bcd_to_segments( X&quot;0&quot;) report    &quot;Chybna hodnota na displeji pro synch reset&quot; report    error </TD></TR></TABLE>>];node19 [shape=ellipse ,label="end loop"]
+node20[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > rst_in&lt;= &#39;0&#39;<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/> report    &quot;Konec resetovani...&quot;<BR ALIGN="LEFT"/> report    &quot;Testujeme CE...&quot;                  . </TD></TR></TABLE>>];node24 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for i in  1 TO  19 loop"]
+node25[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > null </TD></TR></TABLE>>];node27 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for j in  1 TO  10 loop"]
+node28[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  wait  on clk_in until    clk_in= &#39;1&#39; </TD></TR></TABLE>>];node29 [shape=ellipse ,label="end loop"]
+node30 [shape=diamond,style=filled,color="0.7 0.3 1.0",label=" if (   iMOD 2= 0) then"]
+node31[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > ce_in&lt;=not    ce_in </TD></TR></TABLE>>];node33 [shape=diamond,style=filled,color="0.7 0.3 1.0",label=" if    ce_in= &#39;1&#39; then"]
+node34[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > symbol_on_segments_v:=   seg_out </TD></TR></TABLE>>];node35 [shape=diamond,style=filled,color="0.7 0.3 1.0",label=" elsif    ce_in= &#39;0&#39; then"]
+node36[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > assert_moment&lt;=not    assert_moment, &#39;0&#39; after   10 ns<BR ALIGN="LEFT"/>assert    seg_out=   symbol_on_segments_v report    &quot;Nefunguje CE&quot; report    error </TD></TR></TABLE>>];node39 [shape=ellipse ,label="end loop"]
+node40[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Konec testu CE...&quot;<BR ALIGN="LEFT"/> report    &quot;Testujeme synch load hodnoty 5...&quot;<BR ALIGN="LEFT"/>d_in&lt;= x&quot;5&quot;<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/>load_in&lt;= &#39;1&#39;<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;0&#39;<BR ALIGN="LEFT"/>load_in&lt;= &#39;0&#39;                                                                  . </TD></TR></TABLE>>];node47 [shape=diamond,style=filled,color="0.7 0.3 1.0",label="  for j in  1 TO  5 loop"]
+node48[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" > assert_moment&lt;=not    assert_moment, &#39;0&#39; after   10 ns<BR ALIGN="LEFT"/>assert    dut_val_bcd_i=   d_in report    &quot;Nefunguje synch load BCD citace&quot; report    error<BR ALIGN="LEFT"/>assert    seg_out( 6 DOWNTO  0)=   led7seg_bcd_to_segments( X&quot;5&quot;) report    &quot;Chybna hodnota na displeji pro synch load&quot; report    error<BR ALIGN="LEFT"/> wait  on clk_in until    clk_in= &#39;0&#39;                                                                                                                                                                                                    . </TD></TR></TABLE>>];node53 [shape=ellipse ,label="end loop"]
+node54[shape=none margin=0.1, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="2" >
+ <TR><TD BGCOLOR="lightcyan" >  report    &quot;Test done.&quot; severity    note </TD></TR></TABLE>>];node57[shape=box , style=rounded label=<
+<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0" >
+ <TR><TD BGCOLOR="white"> end process  </TD></TR></TABLE>>];edge [color="green",label=""]
+node56->node0
+edge [color="green",label=""]
+node0->node2
+edge [color="green",label=""]
+node2->node5:n
+edge [color="red",label="yes"]
+node5:s->node6
+edge [color="black",label="no"]
+node5:s->node12
+edge [color="green",label=""]
+node6->node8:n
+edge [color="red",label="yes"]
+node8:s->node9
+edge [color="black",label="no"]
+node8:s->node11
+edge [color="green",label=""]
+node9->node10
+edge [color="green",label=""]
+node10->node8:n
+edge [color="green",label=""]
+node11->node5:n
+edge [color="green",label=""]
+node12->node14:n
+edge [color="red",label="yes"]
+node14:s->node15
+edge [color="black",label="no"]
+node14:s->node20
+edge [color="green",label=""]
+node15->node19
+edge [color="green",label=""]
+node19->node14:n
+edge [color="green",label=""]
+node20->node24:n
+edge [color="red",label="yes"]
+node24:s->node25
+edge [color="black",label="no"]
+node24:s->node40
+edge [color="green",label=""]
+node25->node27:n
+edge [color="red",label="yes"]
+node27:s->node28
+edge [color="black",label="no"]
+node27:s->node30:n
+edge [color="green",label=""]
+node28->node29
+edge [color="green",label=""]
+node29->node27:n
+edge [color="red",label="yes"]
+node30:s->node31
+edge [color="black",label="no"]
+node30:s->node33:n
+edge [color="green",label=""]
+node31->node33:n
+edge [color="red",label="yes"]
+node33:s->node34
+edge [color="black",label="no"]
+node33:s->node35
+edge [color="green",label=""]
+node34->node39
+edge [color="red",label="yes"]
+node35->node36
+edge [color="black",label="no"]
+node35->node39
+edge [color="green",label=""]
+node36->node39
+edge [color="green",label=""]
+node39->node24:n
+edge [color="green",label=""]
+node40->node47:n
+edge [color="red",label="yes"]
+node47:s->node48
+edge [color="black",label="no"]
+node47:s->node54
+edge [color="green",label=""]
+node48->node53
+edge [color="green",label=""]
+node53->node47:n
+edge [color="green",label=""]
+node54->node57
+ } 

@@ -1,0 +1,9 @@
+<map id="Adder3" name="Adder3">
+<area shape="rect" id="Node000001" title="Definice entity 3&#45;bitove scitacky Adder3." alt="" coords="32,80,95,107"/>
+<area shape="rect" id="Node000003" href="$class_led7seg__adder3.html" title="Definice top&#45;level entity Led7seg_adder3." alt="" coords="5,155,122,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="64,120,66,155,61,154,63,125"/>
+<area shape="rect" id="Node000002" href="$class_full__adder.html" title="Definice entity Full_adder." alt="" coords="23,5,104,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,45,66,80,61,79,63,50"/>
+<area shape="rect" id="Node000004" href="$class_testbench.html" title="Definice entity Testbench." alt="" coords="23,229,104,256"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="65,195,66,230,61,228,62,199"/>
+</map>

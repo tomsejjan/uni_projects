@@ -1,0 +1,7 @@
+<map id="Full_adder" name="Full_adder">
+<area shape="rect" id="Node000001" title="Definice entity Full_adder." alt="" coords="15,5,97,32"/>
+<area shape="rect" id="Node000002" href="$class_alu2.html" title="Definice entity Alu2." alt="" coords="32,80,80,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="57,45,59,80,53,79,55,50"/>
+<area shape="rect" id="Node000003" href="$class_led7seg__alu2.html" title="Definice top&#45;level entity Led7seg_alu2." alt="" coords="5,155,107,181"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="58,121,59,155,53,154,54,124"/>
+</map>

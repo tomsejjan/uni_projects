@@ -19,7 +19,6 @@ ENTITY Led7seg_adder3 IS
 END ENTITY Led7seg_adder3;
 
 --! \brief Definice strukturalniho popisu architektury entity Led7seg_adder3
---! \todo Zde budou vlozeny instance komponent Adder3 a Led7seg_decoder_hex, ktere bude treba vhodne propojit tak,
 --!       aby vznikl obvod 3-bitove scitacky a dekoderu pro display.
 ARCHITECTURE Structural OF Led7seg_adder3 IS
 

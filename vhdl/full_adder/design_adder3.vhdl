@@ -1,8 +1,5 @@
 --! \file design_adder3.vhdl
 --! \brief Definice entity Adder3 a jeji architektury popsane strukturalnim popisem
---! \todo Vyplnit informace o autorovi v hlavicce souboru !!!
---! $Id: design_adder3.vhdl 2827 2024-10-17 15:45:43Z petyovsky $
-
 
 --! Zavedena standardni knihovna \c IEEE
 LIBRARY ieee;

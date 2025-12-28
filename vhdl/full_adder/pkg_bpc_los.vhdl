@@ -4,8 +4,6 @@
 --! \version 1.9
 --! \author Petyovsky (petyovsky@vut.cz)
 --! \note Due to Mike/ZT now compatible with GHDL. Kudos to you bro. :-)
---! \warning Don't modify this file
---! $Id: pkg_bpc_los.vhdl 2816 2024-10-17 12:55:02Z petyovsky $
 
 --! Zavedena standardni knihovna \c IEEE
 LIBRARY ieee;
